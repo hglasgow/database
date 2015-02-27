@@ -70,7 +70,6 @@ public class ObedienceClassDialog extends JDialog {
 
         pack();
         setResizable(false);
-
     }
 
     private void printObedienceClass() {
