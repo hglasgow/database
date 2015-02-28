@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.TreeMap;
@@ -52,9 +53,14 @@ public class ObedienceClassDialog extends JDialog {
 
         JPanel center = new JPanel(new GridLayout(0, 1));
         getContentPane().add(UiUtils.enFlow(center));
+        java.util.List<JComponent> labels = new ArrayList<JComponent>();
         for (ClassTuple tuple : tuples.values()) {
-            center.add(UiUtils.enFlow(new JLabel(tuple.getObedienceClass().getObedienceClass()), tuple.getSpinner()));
+            JLabel label = new JLabel(tuple.getObedienceClass().getObedienceClass());
+            center.add(UiUtils.enFlow(label, tuple.getSpinner()));
+            labels.add(label);
         }
+
+        UiUtils.sameWidth(labels);
 
         //////////
         // East //
@@ -70,6 +76,7 @@ public class ObedienceClassDialog extends JDialog {
 
         pack();
         setResizable(false);
+
     }
 
     private void printObedienceClass() {

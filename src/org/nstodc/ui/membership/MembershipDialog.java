@@ -78,11 +78,11 @@ public class MembershipDialog extends JDialog implements IOwner {
         JComboBox<MembershipTypeWrapper> membershipTypeCB = new JComboBox<MembershipTypeWrapper>(membershipTypeModel);
         membershipInnerPanel.add(UiUtils.enFlow(l, membershipTypeCB));
 
-        l = new JLabel("Address");
-        membershipInnerPanel.add(UiUtils.enFlow(l, addressTF));
+        JLabel addressLabel = new JLabel("Address");
+        membershipInnerPanel.add(UiUtils.enFlow(addressLabel, addressTF));
         addressTF.setText(membership.getAddress());
 
-        l = new JLabel("Suburb");
+        JLabel suburbLabel = new JLabel("Suburb");
         JComboBox<SuburbWrapper> suburbCB = new JComboBox<SuburbWrapper>(suburbModel);
         JButton addSuburbBtn = new JButton("Add");
         addSuburbBtn.addActionListener(new ActionListener() {
@@ -90,7 +90,7 @@ public class MembershipDialog extends JDialog implements IOwner {
                 addSuburb();
             }
         });
-        membershipInnerPanel.add(UiUtils.enFlow(l, suburbCB, addSuburbBtn));
+        membershipInnerPanel.add(UiUtils.enFlow(suburbLabel, suburbCB, addSuburbBtn));
 
         l = new JLabel("Postcode");
         final JLabel postcodeLabel = new JLabel();
@@ -107,19 +107,19 @@ public class MembershipDialog extends JDialog implements IOwner {
 
         initSuburbs();
 
-        l = new JLabel("Phone");
+        JLabel phoneLabel = new JLabel("Phone");
         phoneTF = new JTextField(20);
-        membershipInnerPanel.add(UiUtils.enFlow(l, phoneTF));
+        membershipInnerPanel.add(UiUtils.enFlow(phoneLabel, phoneTF));
         phoneTF.setText(membership.getPhone());
 
-        l = new JLabel("Mobile");
+        JLabel mobileLabel = new JLabel("Mobile");
         mobileTF = new JTextField(20);
-        membershipInnerPanel.add(UiUtils.enFlow(l, mobileTF));
+        membershipInnerPanel.add(UiUtils.enFlow(mobileLabel, mobileTF));
         mobileTF.setText(membership.getMobile());
 
-        l = new JLabel("Email");
+        JLabel emailLabel = new JLabel("Email");
         emailTF = new JTextField(40);
-        membershipInnerPanel.add(UiUtils.enFlow(l, emailTF));
+        membershipInnerPanel.add(UiUtils.enFlow(emailLabel, emailTF));
         emailTF.setText(membership.getEmail());
 
         sponsorshipCB = new JCheckBox("Allow sponsorship");
@@ -127,6 +127,8 @@ public class MembershipDialog extends JDialog implements IOwner {
         sponsorPanel.add(sponsorshipCB);
         membershipInnerPanel.add(sponsorPanel);
         sponsorshipCB.setSelected(membership.isAllowSponsorship());
+
+        UiUtils.sameWidth(addressLabel, suburbLabel, phoneLabel, mobileLabel, emailLabel);
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override

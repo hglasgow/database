@@ -6,15 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 /**
- * Utility stuff.
+ * Utility stuff for UI.
  */
 public class UiUtils {
-
 
     public static void locate(JDialog dialog, Preferences preferences) {
         String fullClassName = dialog.getClass().getCanonicalName();
@@ -23,7 +22,7 @@ public class UiUtils {
         String yName = className + "Y";
         int x = preferences.getInt(xName, 10);
         int y = preferences.getInt(yName, 10);
-        if (x < 0 || x >= Toolkit.getDefaultToolkit().getScreenSize().width) {
+        if (x < 0 || x >= Toolkit.getDefaultToolkit().getScreenSize().getWidth()) {
             x = 0;
         }
         if (y < 0 || y >= Toolkit.getDefaultToolkit().getScreenSize().getHeight()) {
@@ -107,21 +106,38 @@ public class UiUtils {
     }
 
     public static String lastSunday() {
+        return findSunday(false);
+    }
+
+    public static String nextSunday() {
+        return findSunday(true);
+    }
+
+    private static String findSunday(boolean next) {
         Calendar cal = Calendar.getInstance();
         while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-            cal.add(Calendar.DATE, -1);
+            cal.add(Calendar.DATE, next ? 1 : -1);
         }
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(cal.getTime());
     }
 
-    public static String nextSunday() {
-        Calendar cal = Calendar.getInstance();
-        while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-            cal.add(Calendar.DATE, 1);
+    public static void sameWidth(JComponent... components) {
+        List<JComponent> list = new ArrayList<JComponent>();
+        Collections.addAll(list, components);
+        sameWidth(list);
+    }
+
+    public static void sameWidth(List<JComponent> labels) {
+        double preferredWidth = 0;
+        for (JComponent component : labels) {
+            if (component.getPreferredSize().getWidth() > preferredWidth) {
+                preferredWidth = component.getPreferredSize().getWidth();
+            }
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        return sdf.format(cal.getTime());
+        for (JComponent component : labels) {
+            component.setPreferredSize(new Dimension((int) preferredWidth, (int) component.getPreferredSize().getHeight()));
+        }
     }
 }
 

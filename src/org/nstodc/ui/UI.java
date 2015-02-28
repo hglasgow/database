@@ -44,19 +44,14 @@ public class UI extends JFrame implements IOwner {
 
     private final Preferences preferences = Preferences.userNodeForPackage(getClass());
     private Database database = new Database();
-    private boolean disabled;
-    private final AtomicBoolean loaded = new AtomicBoolean();
+    private final AtomicBoolean applicatoinInitialized = new AtomicBoolean();
+    private final AtomicBoolean loadedDatabaseSuccessfully = new AtomicBoolean();
     private final JMenuItem latestMenuItem;
     private int latestMembership;
 
     public static void main(String[] args) {
-        if (args.length == 1 && args[0].equals("init")) {
-            UI ui = new UI(true);
-            ui.setVisible(true);
-        } else {
-            UI ui = new UI(false);
-            ui.setVisible(true);
-        }
+        UI ui = new UI(args.length == 1 && args[0].equals("init"));
+        ui.setVisible(true);
     }
 
     public UI(final boolean init) throws HeadlessException {
@@ -75,18 +70,17 @@ public class UI extends JFrame implements IOwner {
         });
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         doPreferences();
-        doMenu();
-        Thread t = new Thread() {
+        final Thread t = new Thread() {
             public void run() {
                 try {
                     if (init) {
                         initializeDatabase();
-                    } else if (!loadDatabase()) {
-                        disableUI();
+                    } else {
+                        loadDatabase();
                     }
                     setUITitle();
-                } finally {
-                    loaded.set(true);
+                } catch (Exception e) {
+                    applicatoinInitialized.set(true);
                 }
             }
         };
@@ -98,12 +92,6 @@ public class UI extends JFrame implements IOwner {
             setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("paw.png")));
         } catch (Exception e) {
             // Don't care.
-        }
-    }
-
-    private void ableMenu(boolean enable) {
-        for (int i = 0; i < getJMenuBar().getMenuCount(); i++) {
-            getJMenuBar().getMenu(i).setEnabled(enable);
         }
     }
 
@@ -123,10 +111,12 @@ public class UI extends JFrame implements IOwner {
             database = new Database();
             JOptionPane.showMessageDialog(this, "New database initialized.",
                     "Information", JOptionPane.INFORMATION_MESSAGE);
+            loadedDatabaseSuccessfully.set(true);
         }
     }
 
-    private boolean loadDatabase() {
+    private void loadDatabase() {
+        boolean success = true;
         String fileLocation = preferences.get(Constants.DATABASE_FILE_LOCATION, Constants.DATABASE_FILE_LOCATION_DEFAULT);
         File file = new File(fileLocation, Constants.DATABASE_FILE_NAME);
 
@@ -140,56 +130,65 @@ public class UI extends JFrame implements IOwner {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Could not backup database at " + fileLocation + ".",
                     "Warning", JOptionPane.WARNING_MESSAGE);
-            return false;
+            success = false;
         }
 
         // Load
-        BufferedReader br;
+        BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(file));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Could not open database at " + fileLocation + ".",
                     "Warning", JOptionPane.WARNING_MESSAGE);
-            return false;
+            success = false;
         }
         final StringBuilder sb = new StringBuilder();
-        try {
-            String line;
+        if (success) {
             try {
-                while ((line = br.readLine()) != null) {
-                    sb.append(line);
+                String line;
+                try {
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Could not read database at " + fileLocation + ".",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    success = false;
                 }
+            } finally {
+                try {
+                    br.close();
+                } catch (Exception e) {
+                    // Don't care
+                }
+            }
+
+            // Decode
+            final Dialog d = showProgressDialog();
+            try {
+                XStream xstream = new XStream(new DomDriver());
+                database = (Database) xstream.fromXML(sb.toString());
             } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Could not read database at " + fileLocation + ".",
+                JOptionPane.showMessageDialog(this, e.getMessage(),
                         "Error", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-        } finally {
-            try {
-                br.close();
-            } catch (Exception e) {
-                // Don't care
+                success = false;
+            } finally {
+                d.setVisible(false);
             }
         }
 
-        // Decode
-        final Dialog d = showProgressDialog();
-        try {
-            ableMenu(false);
-            XStream xstream = new XStream(new DomDriver());
-            database = (Database) xstream.fromXML(sb.toString());
-            ableMenu(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, e.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        } finally {
-            d.setVisible(false);
-        }
+        loadedDatabaseSuccessfully.set(success);
 
-        return true;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                doMenu();
+            }
+        });
+
+        return;
     }
 
     private Dialog showProgressDialog() {
@@ -212,10 +211,6 @@ public class UI extends JFrame implements IOwner {
         return dlg;
     }
 
-    private void disableUI() {
-        disabled = true;
-    }
-
     private void doMenu() {
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
@@ -228,73 +223,75 @@ public class UI extends JFrame implements IOwner {
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
         // Add
-        JMenuItem addMenuItem = new JMenuItem("New Membership...");
-        fileMenu.add(addMenuItem);
-        addMenuItem.setMnemonic(KeyEvent.VK_A);
-        addMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, CTRL_MASK));
-        addMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addMembership();
-            }
-        });
+        if (loadedDatabaseSuccessfully.get()) {
+            JMenuItem addMenuItem = new JMenuItem("Add Membership...");
+            fileMenu.add(addMenuItem);
+            addMenuItem.setMnemonic(KeyEvent.VK_A);
+            addMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, CTRL_MASK));
+            addMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    addMembership();
+                }
+            });
 
-        // Search
-        JMenuItem searchMenuItem = new JMenuItem("Search...");
-        fileMenu.add(searchMenuItem);
-        searchMenuItem.setMnemonic(KeyEvent.VK_E);
-        searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, CTRL_MASK));
-        searchMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SearchDialog d = new SearchDialog(UI.this);
-                d.setVisible(true);
-            }
-        });
+            // Search
+            JMenuItem searchMenuItem = new JMenuItem("Search...");
+            fileMenu.add(searchMenuItem);
+            searchMenuItem.setMnemonic(KeyEvent.VK_E);
+            searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, CTRL_MASK));
+            searchMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    SearchDialog d = new SearchDialog(UI.this);
+                    d.setVisible(true);
+                }
+            });
 
-        // Latest
-        fileMenu.add(latestMenuItem);
-        latestMenuItem.setMnemonic(KeyEvent.VK_L);
-        latestMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, CTRL_MASK));
-        latestMenuItem.setEnabled(false);
-        latestMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                editMembership(latestMembership);
-            }
-        });
+            // Latest
+            fileMenu.add(latestMenuItem);
+            latestMenuItem.setMnemonic(KeyEvent.VK_L);
+            latestMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, CTRL_MASK));
+            latestMenuItem.setEnabled(false);
+            latestMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    editMembership(latestMembership);
+                }
+            });
 
-        fileMenu.addSeparator();
+            fileMenu.addSeparator();
 
-        // Save
-        JMenuItem saveMenuItem = new JMenuItem("Save");
-        fileMenu.add(saveMenuItem);
-        saveMenuItem.setMnemonic(KeyEvent.VK_S);
-        saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, CTRL_MASK));
-        saveMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                saveDatabase();
-            }
-        });
+            // Save
+            JMenuItem saveMenuItem = new JMenuItem("Save");
+            fileMenu.add(saveMenuItem);
+            saveMenuItem.setMnemonic(KeyEvent.VK_S);
+            saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, CTRL_MASK));
+            saveMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    saveDatabase();
+                }
+            });
 
-        // Archive
-        JMenuItem archiveMenuItem = new JMenuItem("Archive");
-        fileMenu.add(archiveMenuItem);
-        archiveMenuItem.setMnemonic(KeyEvent.VK_A);
-        archiveMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                archiveDatabase();
-            }
-        });
+            // Archive
+            JMenuItem archiveMenuItem = new JMenuItem("Archive");
+            fileMenu.add(archiveMenuItem);
+            archiveMenuItem.setMnemonic(KeyEvent.VK_A);
+            archiveMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    archiveDatabase();
+                }
+            });
 
-        fileMenu.addSeparator();
+            fileMenu.addSeparator();
 
-        // Exit without saving
-        JMenuItem exitWithoutMenuItem = new JMenuItem("Exit Without Saving...");
-        fileMenu.add(exitWithoutMenuItem);
-        archiveMenuItem.setMnemonic(KeyEvent.VK_W);
-        exitWithoutMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                exitWithoutSaving();
-            }
-        });
+            // Exit without saving
+            JMenuItem exitWithoutMenuItem = new JMenuItem("Exit Without Saving...");
+            fileMenu.add(exitWithoutMenuItem);
+            archiveMenuItem.setMnemonic(KeyEvent.VK_W);
+            exitWithoutMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    exitWithoutSaving();
+                }
+            });
+        }
 
         // Exit
         JMenuItem exitMenuItem = new JMenuItem("Exit");
@@ -313,41 +310,42 @@ public class UI extends JFrame implements IOwner {
         JMenu configurationMenu = new JMenu("Configuration");
         menuBar.add(configurationMenu);
         configurationMenu.setMnemonic(KeyEvent.VK_C);
+        if (loadedDatabaseSuccessfully.get()) {
+            // Payment Amount
+            JMenuItem paymentAmountMenuItem = new JMenuItem("Payment Amount...");
+            configurationMenu.add(paymentAmountMenuItem);
+            paymentAmountMenuItem.setMnemonic(KeyEvent.VK_P);
+            paymentAmountMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    PaymentAmountDialog d = new PaymentAmountDialog(UI.this);
+                    d.setVisible(true);
+                }
+            });
 
-        // Payment Amount
-        JMenuItem paymentAmountMenuItem = new JMenuItem("Payment Amount...");
-        configurationMenu.add(paymentAmountMenuItem);
-        paymentAmountMenuItem.setMnemonic(KeyEvent.VK_P);
-        paymentAmountMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                PaymentAmountDialog d = new PaymentAmountDialog(UI.this);
-                d.setVisible(true);
-            }
-        });
+            // Breeds
+            JMenuItem breedsMenuItem = new JMenuItem("Dog Breeds...");
+            configurationMenu.add(breedsMenuItem);
+            breedsMenuItem.setMnemonic(KeyEvent.VK_D);
+            breedsMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    BreedsDialog d = new BreedsDialog(UI.this);
+                    d.setVisible(true);
+                }
+            });
 
-        // Breeds
-        JMenuItem breedsMenuItem = new JMenuItem("Dog Breeds...");
-        configurationMenu.add(breedsMenuItem);
-        breedsMenuItem.setMnemonic(KeyEvent.VK_D);
-        breedsMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                BreedsDialog d = new BreedsDialog(UI.this);
-                d.setVisible(true);
-            }
-        });
+            // Suburbs
+            JMenuItem suburbsMenuItem = new JMenuItem("Suburbs...");
+            configurationMenu.add(suburbsMenuItem);
+            suburbsMenuItem.setMnemonic(KeyEvent.VK_S);
+            suburbsMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    SuburbsDialog d = new SuburbsDialog(UI.this);
+                    d.setVisible(true);
+                }
+            });
 
-        // Suburbs
-        JMenuItem suburbsMenuItem = new JMenuItem("Suburbs...");
-        configurationMenu.add(suburbsMenuItem);
-        suburbsMenuItem.setMnemonic(KeyEvent.VK_S);
-        suburbsMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SuburbsDialog d = new SuburbsDialog(UI.this);
-                d.setVisible(true);
-            }
-        });
-
-        configurationMenu.addSeparator();
+            configurationMenu.addSeparator();
+        }
 
         // Database
         JMenuItem databaseMenuItem = new JMenuItem("Database Location...");
@@ -359,63 +357,67 @@ public class UI extends JFrame implements IOwner {
             }
         });
 
-        // Archive
-        JMenuItem archiveLocationMenuItem = new JMenuItem("Archive Location...");
-        configurationMenu.add(archiveLocationMenuItem);
-        archiveLocationMenuItem.setMnemonic(KeyEvent.VK_A);
-        archiveLocationMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                archiveLocation();
-            }
-        });
+        if (loadedDatabaseSuccessfully.get()) {
+            // Archive
+            JMenuItem archiveLocationMenuItem = new JMenuItem("Archive Location...");
+            configurationMenu.add(archiveLocationMenuItem);
+            archiveLocationMenuItem.setMnemonic(KeyEvent.VK_A);
+            archiveLocationMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    archiveLocation();
+                }
+            });
+        }
 
         /////////////
         // Reports //
         /////////////
-        JMenu reportsMenu = new JMenu("Reports");
-        menuBar.add(reportsMenu);
-        reportsMenu.setMnemonic(KeyEvent.VK_R);
+        if (loadedDatabaseSuccessfully.get()) {
+            JMenu reportsMenu = new JMenu("Reports");
+            menuBar.add(reportsMenu);
+            reportsMenu.setMnemonic(KeyEvent.VK_R);
 
-        // Obedience class
-        JMenuItem obedienceClassMenuItem = new JMenuItem("Obedience Classes...");
-        reportsMenu.add(obedienceClassMenuItem);
-        obedienceClassMenuItem.setMnemonic(KeyEvent.VK_O);
-        obedienceClassMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ObedienceClassDialog d = new ObedienceClassDialog(UI.this);
-                d.setVisible(true);
-            }
-        });
+            // Obedience class
+            JMenuItem obedienceClassMenuItem = new JMenuItem("Obedience Classes...");
+            reportsMenu.add(obedienceClassMenuItem);
+            obedienceClassMenuItem.setMnemonic(KeyEvent.VK_O);
+            obedienceClassMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    ObedienceClassDialog d = new ObedienceClassDialog(UI.this);
+                    d.setVisible(true);
+                }
+            });
 
-        // New Members
-        JMenuItem newMembersByMonthItem = new JMenuItem("New Members...");
-        reportsMenu.add(newMembersByMonthItem);
-        newMembersByMonthItem.setMnemonic(KeyEvent.VK_N);
-        newMembersByMonthItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                newMembersByMonth();
-            }
-        });
+            // New Members
+            JMenuItem newMembersByMonthItem = new JMenuItem("New Members...");
+            reportsMenu.add(newMembersByMonthItem);
+            newMembersByMonthItem.setMnemonic(KeyEvent.VK_N);
+            newMembersByMonthItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    newMembersByMonth();
+                }
+            });
 
-        // Sponsor Report
-        JMenuItem sponsorReportItem = new JMenuItem("Sponsor Report...");
-        reportsMenu.add(sponsorReportItem);
-        sponsorReportItem.setMnemonic(KeyEvent.VK_S);
-        sponsorReportItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                sponsorReport();
-            }
-        });
+            // Sponsor Report
+            JMenuItem sponsorReportItem = new JMenuItem("Sponsor Report...");
+            reportsMenu.add(sponsorReportItem);
+            sponsorReportItem.setMnemonic(KeyEvent.VK_S);
+            sponsorReportItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    sponsorReport();
+                }
+            });
 
-        // Van Report
-        JMenuItem vanReportItem = new JMenuItem("Van Report...");
-        reportsMenu.add(vanReportItem);
-        vanReportItem.setMnemonic(KeyEvent.VK_V);
-        vanReportItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                vanReport();
-            }
-        });
+            // Van Report
+            JMenuItem vanReportItem = new JMenuItem("Van Report...");
+            reportsMenu.add(vanReportItem);
+            vanReportItem.setMnemonic(KeyEvent.VK_V);
+            vanReportItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    vanReport();
+                }
+            });
+        }
     }
 
     private void sponsorReport() {
@@ -460,7 +462,7 @@ public class UI extends JFrame implements IOwner {
                         String lastName = handler.getLastName();
                         SponsorshipReportLine line = new SponsorshipReportLine(lastName, firstName, phone, mobile,
                                 address, suburb, postcode, date);
-                        map.put(line.getLastName() + line.getFirstName() + String.valueOf(Math.random()), line);
+                        map.put(line.lastName + line.firstName + String.valueOf(Math.random()), line);
                     }
                 }
             }
@@ -649,14 +651,10 @@ public class UI extends JFrame implements IOwner {
                 if (candidate.getAbsolutePath().equals(originalLocation.getAbsolutePath())) {
                     return;
                 }
-                File existCheck = new File(candidate, Constants.DATABASE_FILE_NAME);
-                if (existCheck.exists()) {
-                    JOptionPane.showMessageDialog(this, "Cannot use this location because there already a database at " + candidate.getAbsolutePath() + ".", "Errot", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
                 preferences.put(Constants.DATABASE_FILE_LOCATION, candidate.getAbsolutePath());
                 setUITitle();
-                JOptionPane.showMessageDialog(this, "Database will now be stored at " + candidate.getAbsolutePath() + ".", "Info", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "The database will now be stored at " + candidate.getAbsolutePath() + ".", "Info",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
@@ -679,26 +677,22 @@ public class UI extends JFrame implements IOwner {
     }
 
     public void tryToClose() {
-        if (!loaded.get()) {
-            // No, you are not shutting down until we have loaded the database.
-            return;
-        }
-        try {
-            int s = getExtendedState();
-            if (s == Frame.NORMAL) {
-                preferences.putInt(UI_X, getX());
-                preferences.putInt(UI_Y, getY());
-                preferences.putInt(UI_WIDTH, getWidth());
-                preferences.putInt(UI_HEIGHT, getHeight());
+        if (loadedDatabaseSuccessfully.get()) {
+            try {
+                int s = getExtendedState();
+                if (s == Frame.NORMAL) {
+                    preferences.putInt(UI_X, getX());
+                    preferences.putInt(UI_Y, getY());
+                    preferences.putInt(UI_WIDTH, getWidth());
+                    preferences.putInt(UI_HEIGHT, getHeight());
+                }
+                preferences.putInt(UI_STATE, getExtendedState());
+                preferences.flush();
+            } catch (BackingStoreException e) {
+                // Don't care.
             }
-            preferences.putInt(UI_STATE, getExtendedState());
-            preferences.flush();
-        } catch (BackingStoreException e) {
-            // Don't care.
-        }
 
-        // Save inline cos we are going to sys-ex after this.
-        if (!disabled) {
+            // Save inline cos we are going to sys-ex after this.
             XStream xstream = new XStream(new DomDriver());
             String xml = xstream.toXML(database);
             // Primary
@@ -723,7 +717,7 @@ public class UI extends JFrame implements IOwner {
     }
 
     private void archiveDatabase() {
-        if (disabled) {
+        if (loadedDatabaseSuccessfully.get()) {
             return;
         }
 
@@ -757,7 +751,7 @@ public class UI extends JFrame implements IOwner {
     }
 
     private void saveDatabase() {
-        if (disabled) {
+        if (loadedDatabaseSuccessfully.get()) {
             return;
         }
 
@@ -853,38 +847,6 @@ public class UI extends JFrame implements IOwner {
             this.suburb = suburb;
             this.postcode = postcode;
             this.date = date;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
-
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public String getPhone() {
-            return phone;
-        }
-
-        public String getMobile() {
-            return mobile;
-        }
-
-        public String getAddress() {
-            return address;
-        }
-
-        public String getSuburb() {
-            return suburb;
-        }
-
-        public String getPostcode() {
-            return postcode;
-        }
-
-        public String getDate() {
-            return date;
         }
     }
 

@@ -64,7 +64,7 @@ public class DogDialog extends JDialog implements IOwner {
 
         centerInnerPanel.add(UiUtils.enFlow(new JLabel("Name"), dogNameTF));
         centerInnerPanel.add(UiUtils.enFlow(new JLabel("Membership year"), dogMembershipYearTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Date of birth"), dogDobTF));
+        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Date of birth"), dogDobTF, new JLabel("dd/mm/yyyy")));
         JButton addBreedBtn = new JButton("Add");
         centerInnerPanel.add(UiUtils.enFlow(new JLabel("Breed"), breedList, addBreedBtn));
         addBreedBtn.addActionListener(new ActionListener() {
@@ -94,9 +94,16 @@ public class DogDialog extends JDialog implements IOwner {
         }
         centerInnerPanel.add(UiUtils.enFlow(new JLabel("Obedience class"), obedienceClassCombo));
 
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Weeks"), backfillWeeksTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Months"), backfillMonthsTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Years"), backfillYearsTF));
+        JLabel weeksLabel = new JLabel("Weeks");
+        JLabel monthsLabel = new JLabel("Months");
+        JLabel yearsLabel = new JLabel("Years");
+
+        UiUtils.sameWidth(weeksLabel, monthsLabel, yearsLabel);
+
+        centerInnerPanel.add(UiUtils.enFlow(weeksLabel, backfillWeeksTF));
+        centerInnerPanel.add(UiUtils.enFlow(monthsLabel, backfillMonthsTF));
+        centerInnerPanel.add(UiUtils.enFlow(yearsLabel, backfillYearsTF));
+
         backfillWeeksTF.addFocusListener(new FocusAdapter() {
             public void focusLost(FocusEvent e) {
                 backfillWeek();

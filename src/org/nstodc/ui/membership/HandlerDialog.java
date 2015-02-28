@@ -42,9 +42,15 @@ public class HandlerDialog extends JDialog {
         centerOuterPanel.add(centerInnerPanel);
         getContentPane().add(centerOuterPanel, BorderLayout.CENTER);
 
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("First name"), firstNameTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Last name"), lastNameTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Pensioner CRN"), crnTF));
+        JLabel firstLabel = new JLabel("First name");
+        JLabel lastLabel = new JLabel("Last name");
+        JLabel pensionerLabel = new JLabel("Pensioner CRN");
+
+        UiUtils.sameWidth(firstLabel, lastLabel, pensionerLabel);
+
+        centerInnerPanel.add(UiUtils.enFlow(firstLabel, firstNameTF));
+        centerInnerPanel.add(UiUtils.enFlow(lastLabel, lastNameTF));
+        centerInnerPanel.add(UiUtils.enFlow(pensionerLabel, crnTF));
         JPanel primPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         primPanel.add(primaryCB);
         centerInnerPanel.add(primPanel);

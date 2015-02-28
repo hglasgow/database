@@ -6,6 +6,7 @@ import org.nstodc.database.type.Membership;
 import org.nstodc.database.type.ObedienceClass;
 import org.nstodc.ui.UI;
 import org.nstodc.ui.UiUtils;
+import sun.plugin.util.UIUtil;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -59,10 +60,17 @@ public class SearchDialog extends JDialog {
         });
         resultsScrollPane.setViewportView(resultsList);
 
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Membership ID"), membershipIdTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Dog's name"), dogsNameTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("First name"), firstNameTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Last name"), lastNameTF));
+        JLabel membershipLabel =  new JLabel("Membership ID");
+        JLabel dogLabel =  new JLabel("Dog's name");
+        JLabel firstLabel =  new JLabel("First name");
+        JLabel lastLabel =  new JLabel("Last name");
+
+        UiUtils.sameWidth(membershipLabel, dogLabel, firstLabel, lastLabel);
+
+        centerInnerPanel.add(UiUtils.enFlow(membershipLabel, membershipIdTF));
+        centerInnerPanel.add(UiUtils.enFlow(dogLabel, dogsNameTF));
+        centerInnerPanel.add(UiUtils.enFlow(firstLabel, firstNameTF));
+        centerInnerPanel.add(UiUtils.enFlow(lastLabel, lastNameTF));
 
         membershipIdTF.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
@@ -227,6 +235,12 @@ public class SearchDialog extends JDialog {
         Cursor c = getCursor();
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
+        membershipIdTF.setText("");
+        dogsNameTF.setText("");
+        firstNameTF.setText("");
+        lastNameTF.setText("");
+
+
         Map<Integer, Membership> map = new TreeMap<Integer, Membership>();
         for (Membership membership : owner.getDatabase().getMemberships()) {
             map.put(-membership.getMembershipId(), membership);
@@ -275,12 +289,19 @@ public class SearchDialog extends JDialog {
             }
         }
 
+        showResults(results);
+
+        setCursor(c);
+    }
+
+    private void showResults(Set<Result> results) {
         resultsListModel.clear();
         for (Result result : results) {
             resultsListModel.addElement(result);
         }
-
-        setCursor(c);
+        if (results.size() == 1) {
+            resultsList.setSelectedIndex(0);
+        }
     }
 
     private void search() {
@@ -305,10 +326,7 @@ public class SearchDialog extends JDialog {
             sortDogsName(results, dogsName);
         }
 
-        resultsListModel.clear();
-        for (Result result : results) {
-            resultsListModel.addElement(result);
-        }
+        showResults(results);
     }
 
     private void sortDogsName(Set<Result> results, String dogsName) {

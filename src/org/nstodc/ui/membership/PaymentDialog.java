@@ -55,11 +55,20 @@ public class PaymentDialog extends JDialog {
                 paymentTypeModel.setSelectedItem(w);
             }
         }
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Payment type"), paymentTypeCombo));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Date"), dateTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Year"), yearTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Amount ($)"), amountTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Receipt number"), receiptNumberTF));
+
+        JLabel paymentLabel = new JLabel("Payment type");
+        JLabel dateLabel = new JLabel("Date");
+        JLabel yearLabel = new JLabel("Year");
+        JLabel amountLabel = new JLabel("Amount ($)");
+        JLabel receiptLabel = new JLabel("Receipt number");
+
+        UiUtils.sameWidth(paymentLabel, dateLabel, yearLabel, amountLabel, receiptLabel);
+
+        centerInnerPanel.add(UiUtils.enFlow(paymentLabel, paymentTypeCombo));
+        centerInnerPanel.add(UiUtils.enFlow(dateLabel, dateTF, new JLabel("dd/mm/yyyy")));
+        centerInnerPanel.add(UiUtils.enFlow(yearLabel, yearTF));
+        centerInnerPanel.add(UiUtils.enFlow(amountLabel, amountTF));
+        centerInnerPanel.add(UiUtils.enFlow(receiptLabel, receiptNumberTF));
 
         dateTF.setText(payment.getPaymentDate());
         yearTF.setText(String.valueOf(payment.getYear()));
