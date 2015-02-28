@@ -6,7 +6,6 @@ import org.nstodc.database.type.Membership;
 import org.nstodc.database.type.ObedienceClass;
 import org.nstodc.ui.UI;
 import org.nstodc.ui.UiUtils;
-import sun.plugin.util.UIUtil;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
