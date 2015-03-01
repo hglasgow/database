@@ -30,6 +30,9 @@
         <copy todir="build/jar">
             <fileset dir="lib" includes="**/*.jar" />
         </copy>
+        <copy todir="build/jar">
+            <fileset dir="artefacts" includes="**/*.exe" />
+        </copy>
     </target>
 
 </project>
