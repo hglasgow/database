@@ -76,6 +76,7 @@ public class SearchDialog extends JDialog {
                 firstNameTF.setText("");
                 lastNameTF.setText("");
                 dogsNameTF.setText("");
+                resultsListModel.clear();
             }
         });
 
@@ -84,6 +85,7 @@ public class SearchDialog extends JDialog {
                 membershipIdTF.setText("");
                 lastNameTF.setText("");
                 dogsNameTF.setText("");
+                resultsListModel.clear();
             }
         });
 
@@ -92,6 +94,7 @@ public class SearchDialog extends JDialog {
                 membershipIdTF.setText("");
                 firstNameTF.setText("");
                 dogsNameTF.setText("");
+                resultsListModel.clear();
             }
         });
 
@@ -100,6 +103,7 @@ public class SearchDialog extends JDialog {
                 membershipIdTF.setText("");
                 firstNameTF.setText("");
                 lastNameTF.setText("");
+                resultsListModel.clear();
             }
         });
 
@@ -238,7 +242,6 @@ public class SearchDialog extends JDialog {
         dogsNameTF.setText("");
         firstNameTF.setText("");
         lastNameTF.setText("");
-
 
         Map<Integer, Membership> map = new TreeMap<Integer, Membership>();
         for (Membership membership : owner.getDatabase().getMemberships()) {

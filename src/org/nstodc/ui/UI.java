@@ -725,12 +725,10 @@ public class UI extends JFrame implements IOwner {
     }
 
     private void archiveDatabase() {
-        if (loadedDatabaseSuccessfully.get()) {
+        if (!loadedDatabaseSuccessfully.get()) {
             return;
         }
 
-        XStream xstream = new XStream(new DomDriver());
-        String xml = xstream.toXML(database);
         PrintWriter pw;
         String archiveLocation = preferences.get(Constants.ARCHIVE_FILE_LOCATION, "");
         if (archiveLocation.length() == 0) {
@@ -745,6 +743,8 @@ public class UI extends JFrame implements IOwner {
                 try {
                     pw = new PrintWriter(new FileWriter(new File(archiveLocation, Constants.DATABASE_FILE_NAME)));
                     try {
+                        XStream xstream = new XStream(new DomDriver());
+                        String xml = xstream.toXML(database);
                         pw.println(xml);
                         pw.flush();
                     } finally {
@@ -759,7 +759,7 @@ public class UI extends JFrame implements IOwner {
     }
 
     private void saveDatabase() {
-        if (loadedDatabaseSuccessfully.get()) {
+        if (!loadedDatabaseSuccessfully.get()) {
             return;
         }
 
