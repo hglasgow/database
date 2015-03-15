@@ -65,28 +65,28 @@ public class ObediencePrintable implements Printable {
 
         // Subtitle line
         y += lineHeight;
-        graphics.drawString(" ID", 0, y);
-        graphics.drawString("Owner", pageWidth / 10, y);
-        graphics.drawString("Dog", 3 * pageWidth / 10, y);
-        graphics.drawString("Promoted", 2 * pageWidth / 5, y);
-        graphics.drawString(" ID",pageWidth / 2 , y);
-        graphics.drawString("Owner", 3 * pageWidth / 5, y);
-        graphics.drawString("Dog", 4 * pageWidth / 5, y);
-        graphics.drawString("Promoted", 9 * pageWidth / 10, y);
+        graphics.drawString("Member#", pageWidth / 11, y);
+        graphics.drawString("Owner", 2 * pageWidth / 11, y);
+        graphics.drawString("Dog", 4 * pageWidth / 11, y);
+        graphics.drawString("Promoted", 5 * pageWidth / 11, y);
+        graphics.drawString("Member#", 6 * pageWidth / 11 , y);
+        graphics.drawString("Owner", 7 * pageWidth / 11, y);
+        graphics.drawString("Dog", 9 * pageWidth / 11, y);
+        graphics.drawString("Promoted", 10 * pageWidth / 11, y);
 
         graphics.setFont(plain);
 
         for (PrintLine printLine : block.getPrintLines().values()) {
             y += lineHeight;
-            graphics.drawString(" " + String.valueOf(printLine.getA().getMembershipNumber()), 0, y);
-            graphics.drawString(trim(printLine.getA().getFirstName() + " " + printLine.getA().getLastName(), metrics, pageWidth / 5), pageWidth / 10, y);
-            graphics.drawString(trim(printLine.getA().getDogsName(), metrics, pageWidth / 10), 3 * pageWidth / 10, y);
-            graphics.drawRect(2 * pageWidth / 5, y, lineHeight / 2, - lineHeight / 2);
+            graphics.drawString(String.valueOf(printLine.getA().getMembershipNumber()), pageWidth / 11, y);
+            graphics.drawString(trim(printLine.getA().getFirstName() + " " + printLine.getA().getLastName(), metrics, 2 * pageWidth / 5), 2 * pageWidth / 11, y);
+            graphics.drawString(trim(printLine.getA().getDogsName(), metrics, pageWidth / 11), 4 * pageWidth / 11, y);
+            graphics.drawRect(5 * pageWidth / 11, y, lineHeight / 2, - lineHeight / 2);
             if (printLine.getB() != null) {
-                graphics.drawString(" " + String.valueOf(printLine.getB().getMembershipNumber()), pageWidth / 2, y);
-                graphics.drawString(trim(printLine.getB().getFirstName() + " " + printLine.getB().getLastName(), metrics, pageWidth / 5), 3 * pageWidth / 5, y);
-                graphics.drawString(trim(printLine.getB().getDogsName(), metrics, pageWidth / 10), 4 * pageWidth / 5, y);
-                graphics.drawRect(9 * pageWidth / 10, y, lineHeight / 2, - lineHeight / 2);
+                graphics.drawString(String.valueOf(printLine.getB().getMembershipNumber()), 6 * pageWidth / 11,  y);
+                graphics.drawString(trim(printLine.getB().getFirstName() + " " + printLine.getB().getLastName(), metrics, 2 * pageWidth / 11), 7 * pageWidth / 11, y);
+                graphics.drawString(trim(printLine.getB().getDogsName(), metrics, pageWidth / 11), 9 * pageWidth / 11, y);
+                graphics.drawRect(10 * pageWidth / 11, y, lineHeight / 2, - lineHeight / 2);
             }
         }
     }
