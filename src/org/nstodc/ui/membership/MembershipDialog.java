@@ -577,7 +577,7 @@ public class MembershipDialog extends JDialog implements IOwner {
         }
     }
 
-    private void addHandler() {
+    public void addHandler() {
         int nextHandlerId = 1;
         // Check db, then locally.
         for (Handler handler : owner.getDatabase().getHandlers()) {

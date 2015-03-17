@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Add / edit a handler.
@@ -21,7 +22,7 @@ public class HandlerDialog extends JDialog {
     private JTextField crnTF = new JTextField(20);
     private JCheckBox primaryCB = new JCheckBox("Primary handler");
 
-    public HandlerDialog(MembershipDialog owner, final boolean nyoo, final Handler handler) {
+    public HandlerDialog(final MembershipDialog owner, final boolean nyoo, final Handler handler) {
         super(owner, (nyoo ? "Add" : "Update") + " Handler", true);
         this.owner = owner;
         this.handler = handler;
@@ -59,9 +60,34 @@ public class HandlerDialog extends JDialog {
         // East //
         //////////
 
-        JButton okButton = UiUtils.addEast(this);
+        JButton addButtonNext = null;
+        if (nyoo) {
+            addButtonNext = new JButton("Add Next");
+            addButtonNext.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (validateIt()) {
+                        handler.setFirstName(firstNameTF.getText().trim());
+                        handler.setLastName(lastNameTF.getText().trim());
+                        handler.setCrn(crnTF.getText().trim());
+                        handler.setPrimary(primaryCB.isSelected());
+                        if (nyoo) {
+                            saveNew();
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    owner.addHandler();
+                                }
+                            });
+                        } else {
+                            saveExisting();
+                        }
+                        dispose();
+                    }
+                }
+            });
+        }
+
+        JButton okButton = UiUtils.addEast(this, addButtonNext);
         okButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 if (validateIt()) {
                     handler.setFirstName(firstNameTF.getText().trim());
@@ -73,7 +99,7 @@ public class HandlerDialog extends JDialog {
                     } else {
                         saveExisting();
                     }
-                    dispose();
+                dispose();
                 }
             }
         });

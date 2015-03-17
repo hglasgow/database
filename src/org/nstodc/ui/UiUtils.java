@@ -68,6 +68,33 @@ public class UiUtils {
         return okButton;
     }
 
+    public static JButton addEast(final JDialog dialog, JButton... otherButtons) {
+
+        JButton okButton = new JButton("OK");
+
+        JPanel flow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        dialog.getContentPane().add(flow, BorderLayout.EAST);
+
+        JPanel grid = new JPanel(new GridLayout(0, 1));
+        flow.add(grid);
+        grid.add(okButton);
+        for (JButton otherButton : otherButtons) {
+            if (otherButton != null) {
+                grid.add(otherButton);
+            }
+        }
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        });
+        grid.add(cancelButton);
+        dialog.getRootPane().setDefaultButton(okButton);
+        return okButton;
+    }
+
     public static String today() {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
