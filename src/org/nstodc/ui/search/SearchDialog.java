@@ -218,6 +218,8 @@ public class SearchDialog extends JDialog {
         if (selectedIndex >= 0) {
             Result result = resultsList.getSelectedValue();
             advanceButton.setEnabled(result.dog != null);
+        } else {
+            advanceButton.setEnabled(false);
         }
     }
 
