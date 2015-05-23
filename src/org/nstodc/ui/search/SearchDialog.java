@@ -41,7 +41,7 @@ public class SearchDialog extends JDialog {
         getContentPane().setLayout(new BorderLayout());
 
         JPanel centerOuterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JPanel centerInnerPanel = new JPanel(new GridLayout(0,1));
+        JPanel centerInnerPanel = new JPanel(new GridLayout(0, 1));
         centerOuterPanel.add(centerInnerPanel);
         getContentPane().add(centerOuterPanel, BorderLayout.WEST);
 
@@ -59,10 +59,10 @@ public class SearchDialog extends JDialog {
         });
         resultsScrollPane.setViewportView(resultsList);
 
-        JLabel membershipLabel =  new JLabel("Membership ID");
-        JLabel dogLabel =  new JLabel("Dog's name");
-        JLabel firstLabel =  new JLabel("First name");
-        JLabel lastLabel =  new JLabel("Last name");
+        JLabel membershipLabel = new JLabel("Membership ID");
+        JLabel dogLabel = new JLabel("Dog's name");
+        JLabel firstLabel = new JLabel("First name");
+        JLabel lastLabel = new JLabel("Last name");
 
         UiUtils.sameWidth(membershipLabel, dogLabel, firstLabel, lastLabel);
 
@@ -72,38 +72,46 @@ public class SearchDialog extends JDialog {
         centerInnerPanel.add(UiUtils.enFlow(lastLabel, lastNameTF));
 
         membershipIdTF.addKeyListener(new KeyAdapter() {
-            public void keyTyped(KeyEvent e) {
-                firstNameTF.setText("");
-                lastNameTF.setText("");
-                dogsNameTF.setText("");
-                resultsListModel.clear();
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() != KeyEvent.VK_ENTER) {
+                    firstNameTF.setText("");
+                    lastNameTF.setText("");
+                    dogsNameTF.setText("");
+                    resultsListModel.clear();
+                }
             }
         });
 
         firstNameTF.addKeyListener(new KeyAdapter() {
-            public void keyTyped(KeyEvent e) {
-                membershipIdTF.setText("");
-                lastNameTF.setText("");
-                dogsNameTF.setText("");
-                resultsListModel.clear();
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() != KeyEvent.VK_ENTER) {
+                    membershipIdTF.setText("");
+                    lastNameTF.setText("");
+                    dogsNameTF.setText("");
+                    resultsListModel.clear();
+                }
             }
         });
 
         lastNameTF.addKeyListener(new KeyAdapter() {
-            public void keyTyped(KeyEvent e) {
-                membershipIdTF.setText("");
-                firstNameTF.setText("");
-                dogsNameTF.setText("");
-                resultsListModel.clear();
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() != KeyEvent.VK_ENTER) {
+                    membershipIdTF.setText("");
+                    firstNameTF.setText("");
+                    dogsNameTF.setText("");
+                    resultsListModel.clear();
+                }
             }
         });
 
         dogsNameTF.addKeyListener(new KeyAdapter() {
-            public void keyTyped(KeyEvent e) {
-                membershipIdTF.setText("");
-                firstNameTF.setText("");
-                lastNameTF.setText("");
-                resultsListModel.clear();
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() != KeyEvent.VK_ENTER) {
+                    membershipIdTF.setText("");
+                    firstNameTF.setText("");
+                    lastNameTF.setText("");
+                    resultsListModel.clear();
+                }
             }
         });
 
@@ -121,7 +129,6 @@ public class SearchDialog extends JDialog {
 
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 search();
             }
@@ -176,7 +183,7 @@ public class SearchDialog extends JDialog {
     }
 
     private void advance() {
-        int index =resultsList.getSelectedIndex();
+        int index = resultsList.getSelectedIndex();
         if (index >= 0) {
             Result result = resultsListModel.getElementAt(index);
             Dog dog = result.dog;
@@ -316,7 +323,8 @@ public class SearchDialog extends JDialog {
 
         try {
             membershipId = Integer.parseInt(membershipIdTF.getText().trim());
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+        }
 
         Set<Result> results = new TreeSet<Result>();
 

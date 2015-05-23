@@ -17,6 +17,7 @@ import org.nstodc.ui.configuration.PaymentAmountDialog;
 import org.nstodc.ui.configuration.SuburbsDialog;
 import org.nstodc.ui.membership.MembershipBundle;
 import org.nstodc.ui.membership.MembershipDialog;
+import org.nstodc.ui.reports.MembershipCountReportDialog;
 import org.nstodc.ui.reports.NewMembersByMonthDialog;
 import org.nstodc.ui.reports.ObedienceClassDialog;
 import org.nstodc.ui.search.SearchDialog;
@@ -187,8 +188,6 @@ public class UI extends JFrame implements IOwner {
                 doMenu();
             }
         });
-
-        return;
     }
 
     private Dialog showProgressDialog() {
@@ -417,7 +416,22 @@ public class UI extends JFrame implements IOwner {
                     vanReport();
                 }
             });
+
+            // Count of memberships by type
+            JMenuItem membershipCountItem = new JMenuItem("Membership Count...");
+            reportsMenu.add(membershipCountItem);
+            membershipCountItem.setMnemonic(KeyEvent.VK_C);
+            membershipCountItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    membershipCountReport();
+                }
+            });
         }
+    }
+
+    private void membershipCountReport() {
+        MembershipCountReportDialog d = new MembershipCountReportDialog(this);
+        d.setVisible(true);
     }
 
     private void sponsorReport() {
