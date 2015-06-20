@@ -217,6 +217,12 @@ public class SearchDialog extends JDialog {
                 }
             }
         }
+        resultsListModel.clear();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                search();
+            }
+        });
     }
 
     private void ableEditAdvanceButton() {
