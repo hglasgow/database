@@ -310,9 +310,22 @@ public class SearchDialog extends JDialog {
         for (Result result : results) {
             resultsListModel.addElement(result);
         }
-        if (results.size() == 1) {
-            resultsList.setSelectedIndex(0);
+        selectSinglePrimaryEntry();
+    }
+
+    private void selectSinglePrimaryEntry() {
+        int index = -1;
+        for (int i = 0; i < resultsList.getModel().getSize(); i++) {
+            Result elementAt = resultsList.getModel().getElementAt(i);
+            if (elementAt.handler.isPrimary()) {
+                if (index >= 0) {
+                    return;
+                }
+                index = i;
+            }
         }
+        resultsList.setSelectedIndex(index);
+
     }
 
     private void search() {

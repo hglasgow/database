@@ -1,7 +1,5 @@
 package org.nstodc.print.van;
 
-import org.nstodc.ui.UiUtils;
-
 import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
