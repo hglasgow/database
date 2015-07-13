@@ -23,7 +23,7 @@ public class UpsertBreedDialog extends JDialog {
         super(owner, (nyoo ? "Add" : "Update") + " Breed", true);
         this.owner = owner;
         this.breed = breed;
-        UiUtils.locate(this, owner.getPreferences());
+        UiUtils.locateAndCrippleClose(this, owner.getPreferences());
 
         getContentPane().setLayout(new BorderLayout());
 

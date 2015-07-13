@@ -22,7 +22,7 @@ public class MembershipCountReportDialog extends JDialog {
     public MembershipCountReportDialog(UI owner) {
         super(owner, "Membership Count", true);
         this.owner = owner;
-        UiUtils.locate(this, owner.getPreferences());
+        UiUtils.locateAndCrippleClose(this, owner.getPreferences());
         getContentPane().setLayout(new BorderLayout());
 
         ////////////

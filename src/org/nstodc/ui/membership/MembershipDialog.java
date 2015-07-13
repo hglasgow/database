@@ -47,8 +47,7 @@ public class MembershipDialog extends JDialog implements IOwner {
         this.nyoo = nyoo;
         this.owner = owner;
         this.membership = bundle.getMembership();
-        UiUtils.locate(this, owner.getPreferences());
-
+        UiUtils.locateAndCrippleClose(this, owner.getPreferences());
         getContentPane().setLayout(new BorderLayout());
 
         JTabbedPane tabs = new JTabbedPane();

@@ -41,7 +41,7 @@ public class NewMembersByMonthDialog extends JDialog {
 
         super(owner, "New Members", true);
         this.owner = owner;
-        UiUtils.locate(this, owner.getPreferences());
+        UiUtils.locateAndCrippleClose(this, owner.getPreferences());
 
         getContentPane().setLayout(new BorderLayout());
 

@@ -15,7 +15,7 @@ import java.util.prefs.Preferences;
  */
 public class UiUtils {
 
-    public static void locate(JDialog dialog, Preferences preferences) {
+    public static void locateAndCrippleClose(JDialog dialog, Preferences preferences) {
         String fullClassName = dialog.getClass().getCanonicalName();
         String className = fullClassName.substring(1 + fullClassName.lastIndexOf("."));
         String xName = className + "X";
@@ -29,6 +29,8 @@ public class UiUtils {
             y = 0;
         }
         dialog.setLocation(x, y);
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
     }
 
     public static void updateLocation(JDialog dialog, Preferences preferences) {

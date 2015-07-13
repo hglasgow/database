@@ -37,7 +37,7 @@ public class SearchDialog extends JDialog {
     public SearchDialog(final UI owner) {
         super(owner, "Search", true);
         this.owner = owner;
-        UiUtils.locate(this, owner.getPreferences());
+        UiUtils.locateAndCrippleClose(this, owner.getPreferences());
         getContentPane().setLayout(new BorderLayout());
 
         JPanel centerOuterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));

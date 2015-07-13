@@ -34,7 +34,7 @@ public class ObedienceClassDialog extends JDialog {
 
         super(owner, "Obedience Class", true);
         this.owner = owner;
-        UiUtils.locate(this, owner.getPreferences());
+        UiUtils.locateAndCrippleClose(this, owner.getPreferences());
 
         for (ObedienceClass obedienceClass : owner.getDatabase().getObedienceClasses()) {
             SpinnerNumberModel model = new SpinnerNumberModel(1, 0, 5, 1);

@@ -26,7 +26,7 @@ public class HandlerDialog extends JDialog {
         super(owner, (nyoo ? "Add" : "Update") + " Handler", true);
         this.owner = owner;
         this.handler = handler;
-        UiUtils.locate(this, owner.getPreferences());
+        UiUtils.locateAndCrippleClose(this, owner.getPreferences());
         firstNameTF.setText(handler.getFirstName());
         lastNameTF.setText(handler.getLastName());
         crnTF.setText(handler.getCrn());

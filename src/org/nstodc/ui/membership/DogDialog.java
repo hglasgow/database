@@ -49,7 +49,7 @@ public class DogDialog extends JDialog implements IOwner {
         super(owner, (nyoo ? "Add" : "Update") + " Dog", true);
         this.owner = owner;
         this.dog = dog;
-        UiUtils.locate(this, owner.getPreferences());
+        UiUtils.locateAndCrippleClose(this, owner.getPreferences());
 
         getContentPane().setLayout(new BorderLayout());
 

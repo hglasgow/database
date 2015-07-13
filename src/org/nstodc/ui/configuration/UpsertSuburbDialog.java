@@ -1,6 +1,5 @@
 package org.nstodc.ui.configuration;
 
-import org.nstodc.database.type.Breed;
 import org.nstodc.database.type.Suburb;
 import org.nstodc.ui.UiUtils;
 
@@ -24,7 +23,7 @@ public class UpsertSuburbDialog extends JDialog {
         super(owner, (nyoo ? "Add" : "Update") + " Suburb", true);
         this.owner = owner;
         this.suburb = suburb;
-        UiUtils.locate(this, owner.getPreferences());
+        UiUtils.locateAndCrippleClose(this, owner.getPreferences());
 
         getContentPane().setLayout(new BorderLayout());
 

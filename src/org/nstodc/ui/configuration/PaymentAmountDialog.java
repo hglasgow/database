@@ -19,7 +19,7 @@ public class PaymentAmountDialog extends JDialog {
     public PaymentAmountDialog(final UI owner) {
         super(owner, "Payment Amount", true);
         this.owner = owner;
-        UiUtils.locate(this, owner.getPreferences());
+        UiUtils.locateAndCrippleClose(this, owner.getPreferences());
         getContentPane().setLayout(new BorderLayout());
 
         JPanel centerOuterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));

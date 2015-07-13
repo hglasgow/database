@@ -31,7 +31,7 @@ public class PaymentDialog extends JDialog {
         super(owner, (nyoo ? "Add" : "Update") + " Payment", true);
         this.owner = owner;
         this.payment = payment;
-        UiUtils.locate(this, owner.getPreferences());
+        UiUtils.locateAndCrippleClose(this, owner.getPreferences());
 
         getContentPane().setLayout(new BorderLayout());
 

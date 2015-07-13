@@ -43,7 +43,7 @@ public class SuburbsDialog extends JDialog {
     }
 
     private void init() {
-        UiUtils.locate(this, owner.getPreferences());
+        UiUtils.locateAndCrippleClose(this, owner.getPreferences());
         getContentPane().setLayout(new BorderLayout());
 
         ////////////
