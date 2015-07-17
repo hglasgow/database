@@ -45,7 +45,6 @@ public class UI extends JFrame implements IOwner {
 
     private final Preferences preferences = Preferences.userNodeForPackage(getClass());
     private Database database = new Database();
-    private final AtomicBoolean applicatoinInitialized = new AtomicBoolean();
     private final AtomicBoolean loadedDatabaseSuccessfully = new AtomicBoolean();
     private final JMenuItem latestMenuItem;
     private int latestMembership;
@@ -81,7 +80,7 @@ public class UI extends JFrame implements IOwner {
                     }
                     setUITitle();
                 } catch (Exception e) {
-                    applicatoinInitialized.set(true);
+                    // Don't care.
                 }
             }
         };
@@ -451,7 +450,7 @@ public class UI extends JFrame implements IOwner {
         Date from = cal.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
-            Map<String, SponsorshipReportLine> map = new TreeMap<String, SponsorshipReportLine>();
+            Map<String, SponsorshipReportLine> map = new TreeMap<>();
             for (Membership membership : database.getMemberships()) {
 
                 if (!membership.isAllowSponsorship()) {
@@ -835,19 +834,19 @@ public class UI extends JFrame implements IOwner {
     public void editMembership(int membershipId) {
         for (Membership membership : database.getMemberships()) {
             if (membership.getMembershipId() == membershipId) {
-                Set<Handler> handlers = new HashSet<Handler>();
+                Set<Handler> handlers = new HashSet<>();
                 for (Handler handler : database.getHandlers()) {
                     if (handler.getMembershipId() == membershipId) {
                         handlers.add(handler);
                     }
                 }
-                Set<Dog> dogs = new HashSet<Dog>();
+                Set<Dog> dogs = new HashSet<>();
                 for (Dog dog : database.getDogs()) {
                     if (dog.getMembershipId() == membershipId) {
                         dogs.add(dog);
                     }
                 }
-                Set<Payment> payments = new HashSet<Payment>();
+                Set<Payment> payments = new HashSet<>();
                 for (Payment payment : database.getPayments()) {
                     if (payment.getMembershipId() == membershipId) {
                         payments.add(payment);
