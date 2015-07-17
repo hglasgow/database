@@ -152,7 +152,7 @@ public class UiUtils {
     }
 
     public static void sameWidth(JComponent... components) {
-        List<JComponent> list = new ArrayList<JComponent>();
+        List<JComponent> list = new ArrayList<>();
         Collections.addAll(list, components);
         sameWidth(list);
     }
