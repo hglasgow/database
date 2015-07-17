@@ -22,6 +22,10 @@ public class Database {
     private Set<PaymentType> paymentTypes = new HashSet<PaymentType>();
     private Set<Suburb> suburbs = new HashSet<Suburb>();
     private Set<ObedienceClass> obedienceClasses = new HashSet<ObedienceClass>();
+    private int defaultMembershipAmountFromJuly;
+    private int defaultMembershipAmountFromAugust;
+    private int defaultMembershipAmountFromSeptember;
+    private int defaultMembershipAmountFromOctober;
 
     public Set<Breed> getBreeds() {
         return Collections.unmodifiableSet(breeds);
@@ -281,5 +285,37 @@ public class Database {
 
     public void setDefaultMembershipAmount(int defaultMembershipAmount) {
         this.defaultMembershipAmount = defaultMembershipAmount;
+    }
+
+    public int getDefaultMembershipAmountFromJuly() {
+        return defaultMembershipAmountFromJuly;
+    }
+
+    public void setDefaultMembershipAmountFromJuly(int defaultMembershipAmountFromJuly) {
+        this.defaultMembershipAmountFromJuly = defaultMembershipAmountFromJuly;
+    }
+
+    public int getDefaultMembershipAmountFromAugust() {
+        return defaultMembershipAmountFromAugust;
+    }
+
+    public void setDefaultMembershipAmountFromAugust(int defaultMembershipAmountFromAugust) {
+        this.defaultMembershipAmountFromAugust = defaultMembershipAmountFromAugust;
+    }
+
+    public int getDefaultMembershipAmountFromSeptember() {
+        return defaultMembershipAmountFromSeptember;
+    }
+
+    public void setDefaultMembershipAmountFromSeptember(int defaultMembershipAmountFromSeptember) {
+        this.defaultMembershipAmountFromSeptember = defaultMembershipAmountFromSeptember;
+    }
+
+    public int getDefaultMembershipAmountFromOctober() {
+        return defaultMembershipAmountFromOctober;
+    }
+
+    public void setDefaultMembershipAmountFromOctober(int defaultMembershipAmountFromOctober) {
+        this.defaultMembershipAmountFromOctober = defaultMembershipAmountFromOctober;
     }
 }

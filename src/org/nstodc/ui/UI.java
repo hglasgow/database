@@ -562,6 +562,23 @@ public class UI extends JFrame implements IOwner {
 
     private void vanReport() {
         VanBean vb = createVanBean();
+//        try {
+//            PrintWriter pw = new PrintWriter(new FileWriter("q.csv"));
+//            for (Map.Entry<String, VanDetailEntry> entry : vb.getEntries().entrySet()) {
+//                VanDetailEntry value = entry.getValue();
+//                pw.println("\"" +
+//                                value.getFirstName() + "\",\"" +
+//                                value.getLastName() + "\",\"" +
+//                                value.getAddress() + "\",\"" +
+//                                value.getSuburb() + "\",\"" +
+//                                value.getPostcode() + "\",\"" +
+//                                "\""
+//                );
+//            }
+//            pw.flush();
+//            pw.close();
+//        } catch (Exception e) {
+//        }
         printVanReport(vb);
     }
 

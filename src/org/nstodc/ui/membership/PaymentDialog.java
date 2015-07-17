@@ -26,7 +26,6 @@ public class PaymentDialog extends JDialog {
     private final JTextField amountTF = new JTextField(10);
     private final JTextField receiptNumberTF = new JTextField(10);
 
-
     public PaymentDialog(MembershipDialog owner, final boolean nyoo, final Payment payment) {
         super(owner, (nyoo ? "Add" : "Update") + " Payment", true);
         this.owner = owner;

@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Calendar;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.prefs.Preferences;
@@ -633,7 +634,20 @@ public class MembershipDialog extends JDialog implements IOwner {
         Payment p = new Payment(nextPaymentId, membership.getMembershipId());
         p.setYear(UiUtils.defaultYear());
         p.setPaymentDate(UiUtils.lastSunday());
-        p.setAmount(getDatabase().getDefaultMembershipAmount());
+        Calendar cal = Calendar.getInstance();
+        int month = cal.get(Calendar.MONTH);
+        if (month == Calendar.OCTOBER) {
+            p.setAmount(getDatabase().getDefaultMembershipAmountFromOctober());
+        } else if (month == Calendar.SEPTEMBER) {
+            p.setAmount(getDatabase().getDefaultMembershipAmountFromAugust());
+        } else if (month == Calendar.AUGUST) {
+            p.setAmount(getDatabase().getDefaultMembershipAmountFromAugust());
+        } else if (month == Calendar.JULY) {
+            p.setAmount(getDatabase().getDefaultMembershipAmountFromJuly());
+        } else {
+            p.setAmount(getDatabase().getDefaultMembershipAmount());
+        }
+
         PaymentDialog dialog = new PaymentDialog(this, true, p);
         dialog.setVisible(true);
     }
