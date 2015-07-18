@@ -209,6 +209,7 @@ public class SearchDialog extends JDialog {
                                 @Override
                                 public void run() {
                                     resultsList.ensureIndexIsVisible(resultsListModel.size() - 1);
+                                    membershipIdTF.requestFocus();
                                 }
                             });
                             break;
