@@ -2,10 +2,7 @@ package org.nstodc.database;
 
 import org.nstodc.database.type.*;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Database model.
@@ -26,6 +23,7 @@ public class Database {
     private int defaultMembershipAmountFromAugust;
     private int defaultMembershipAmountFromSeptember;
     private int defaultMembershipAmountFromOctober;
+    private Date lastArchived;
 
     public Set<Breed> getBreeds() {
         return Collections.unmodifiableSet(breeds);
@@ -317,5 +315,13 @@ public class Database {
 
     public void setDefaultMembershipAmountFromOctober(int defaultMembershipAmountFromOctober) {
         this.defaultMembershipAmountFromOctober = defaultMembershipAmountFromOctober;
+    }
+
+    public Date getLastArchived() {
+        return lastArchived;
+    }
+
+    public void setLastArchived(Date lastArchived) {
+        this.lastArchived = lastArchived;
     }
 }

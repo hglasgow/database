@@ -79,12 +79,32 @@ public class UI extends JFrame implements IOwner {
                         loadDatabase();
                     }
                     setUITitle();
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            checkLastArchived();
+                        }
+                    });
                 } catch (Exception e) {
                     // Don't care.
                 }
             }
         };
         t.start();
+    }
+
+    private void checkLastArchived() {
+        Date lastArchived = database.getLastArchived();
+        if (lastArchived == null) {
+            return;
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -1);
+        Date oneMonthAgo = cal.getTime();
+        if (lastArchived.compareTo(oneMonthAgo) < 0) {
+            JOptionPane.showMessageDialog(this, "The database has not been archived for over a month.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     private void doIcon() {
@@ -758,6 +778,8 @@ public class UI extends JFrame implements IOwner {
         if (!loadedDatabaseSuccessfully.get()) {
             return;
         }
+
+        database.setLastArchived(Calendar.getInstance().getTime());
 
         PrintWriter pw;
         String archiveLocation = preferences.get(Constants.ARCHIVE_FILE_LOCATION, "");
