@@ -128,6 +128,28 @@ public class HandlerDialog extends JDialog {
             JOptionPane.showMessageDialog(this, "Last name required.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+        String firstLetter = first.substring(0, 1);
+        if (firstLetter.matches("[a-z]")) {
+            String firstCandidate = firstLetter.toUpperCase() + first.substring(1);
+            int q = JOptionPane.showConfirmDialog(this, "Convert first name from '" + first + "' to '" + firstCandidate + "'?", "First Name", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (q == JOptionPane.CANCEL_OPTION) {
+                return false;
+            }
+            if (q == JOptionPane.YES_OPTION) {
+                firstNameTF.setText(firstCandidate);
+            }
+        }
+        String lastLetter = last.substring(0, 1);
+        if (lastLetter.matches("[a-z]")) {
+            String lastCandidate = lastLetter.toUpperCase() + last.substring(1);
+            int q = JOptionPane.showConfirmDialog(this, "Convert last name from '" + last + "' to '" + lastCandidate + "'?", "Last Name", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (q == JOptionPane.CANCEL_OPTION) {
+                return false;
+            }
+            if (q == JOptionPane.YES_OPTION) {
+                lastNameTF.setText(lastCandidate);
+            }
+        }
         return true;
     }
 

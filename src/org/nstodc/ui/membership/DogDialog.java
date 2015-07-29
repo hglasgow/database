@@ -280,6 +280,18 @@ public class DogDialog extends JDialog implements IOwner {
                 return false;
             }
         }
+        String dogsName = dogNameTF.getText().trim();
+        String letter = dogsName.substring(0, 1);
+        if (letter.matches("[a-z]")) {
+            String candidate = letter.toUpperCase() + dogsName.substring(1);
+            int q = JOptionPane.showConfirmDialog(this, "Convert name from '" + dogsName + "' to '" + candidate + "'?", "Dog's Name", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (q == JOptionPane.CANCEL_OPTION) {
+                return false;
+            }
+            if (q == JOptionPane.YES_OPTION) {
+                dogNameTF.setText(candidate);
+            }
+        }
 
         return true;
     }
