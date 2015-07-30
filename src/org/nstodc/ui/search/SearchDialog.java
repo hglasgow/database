@@ -134,11 +134,11 @@ public class SearchDialog extends JDialog {
             }
         });
 
-        JButton lastThousandButton = new JButton("Latest 1000");
-        lastThousandButton.addActionListener(new ActionListener() {
+        JButton lastHundredButton = new JButton("Latest 100");
+        lastHundredButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                lastThousand();
+                lastHundred();
             }
         });
 
@@ -164,7 +164,7 @@ public class SearchDialog extends JDialog {
         JPanel grid = new JPanel(new GridLayout(0, 1));
         flow.add(grid);
         grid.add(searchButton);
-        grid.add(lastThousandButton);
+        grid.add(lastHundredButton);
         grid.add(advanceButton);
         grid.add(editButton);
         grid.add(cancelButton);
@@ -250,7 +250,7 @@ public class SearchDialog extends JDialog {
         }
     }
 
-    private void lastThousand() {
+    private void lastHundred() {
         Cursor c = getCursor();
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -302,7 +302,7 @@ public class SearchDialog extends JDialog {
                 }
 
             }
-            if (count++ > 1000) {
+            if (count++ > 100) {
                 break;
             }
         }
