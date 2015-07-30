@@ -42,6 +42,7 @@ public class MembershipDialog extends JDialog implements IOwner {
     private final JList<DogWrapper> dogsList;
     private final DefaultListModel<PaymentWrapper> paymentsListModel = new DefaultListModel<PaymentWrapper>();
     private final JList<PaymentWrapper> paymentsList;
+    private String phone;
 
     public MembershipDialog(final UI owner, final boolean nyoo, final MembershipBundle bundle) {
         super(owner, (nyoo ? "Add" : "Update") + " Membership " + bundle.getMembership().getMembershipId() + " (" + bundle.getMembership().getDateJoined() + ")", true);
@@ -460,6 +461,10 @@ public class MembershipDialog extends JDialog implements IOwner {
         boolean allowSponsorship = sponsorshipCB.isSelected();
         int membershipTypeId = ((MembershipTypeWrapper) membershipTypeModel.getSelectedItem()).membershipType.getMembershipTypeId();
 
+        phone = formatPhone(phone);
+
+        mobile = formatMobile(mobile);
+
         membership.setAddress(address);
         membership.setPhone(phone);
         membership.setMobile(mobile);
@@ -476,6 +481,26 @@ public class MembershipDialog extends JDialog implements IOwner {
             }
         }
 
+    }
+
+    private String formatMobile(String mobile) {
+        if (mobile != null && mobile.startsWith("04")) {
+            mobile = mobile.replaceAll("\\s", "");
+            if (mobile.length() == 10) {
+                mobile = mobile.substring(0, 4) + " " + mobile.substring(4, 7) + " " + mobile.substring(7);
+            }
+        }
+        return mobile;
+    }
+
+    private String formatPhone(String phone) {
+        if (phone != null && phone.startsWith("9")) {
+            phone = phone.replaceAll("\\s", "");
+            if (phone.length() == 8) {
+                phone = phone.substring(0, 4) + " " + phone.substring(4);
+            }
+        }
+        return phone;
     }
 
     private void updateHandlers() {
