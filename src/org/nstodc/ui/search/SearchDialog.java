@@ -30,6 +30,7 @@ public class SearchDialog extends JDialog {
     private JTextField dogsNameTF = new JTextField(10);
     private JButton advanceButton = new JButton("Advance");
     private JButton editButton = new JButton("Edit");
+    private boolean lastSearchByDog;
 
     private final DefaultListModel<Result> resultsListModel = new DefaultListModel<Result>();
     JList<Result> resultsList = new JList<Result>(resultsListModel);
@@ -209,7 +210,13 @@ public class SearchDialog extends JDialog {
                                 @Override
                                 public void run() {
                                     resultsList.ensureIndexIsVisible(resultsListModel.size() - 1);
-                                    membershipIdTF.requestFocus();
+                                    if (lastSearchByDog) {
+                                        dogsNameTF.requestFocus();
+                                        dogsNameTF.selectAll();
+                                    } else {
+                                        membershipIdTF.requestFocus();
+                                        membershipIdTF.selectAll();
+                                    }
                                 }
                             });
                             break;
@@ -347,6 +354,7 @@ public class SearchDialog extends JDialog {
         }
 
         Set<Result> results = new TreeSet<Result>();
+        lastSearchByDog = false;
 
         if (membershipId >= 0) {
             sortMembershipId(results, membershipId);
@@ -355,6 +363,7 @@ public class SearchDialog extends JDialog {
         } else if (lastName.length() > 0) {
             sortLastName(results, lastName);
         } else if (dogsName.length() > 0) {
+            lastSearchByDog = true;
             sortDogsName(results, dogsName);
         }
 
