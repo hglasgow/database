@@ -28,4 +28,7 @@ public class Constants {
 
     public static final String ARCHIVE_FILE_LOCATION = "a";
     public static final String UI_OBEDIENCE_CLASS = "oc";
+
+    public static final String SEARCH_PRIMARY = "p";
+    public static final boolean SEARCH_PRIMARY_DEFAULT = false;
 }

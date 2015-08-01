@@ -4,6 +4,7 @@ import org.nstodc.database.type.Dog;
 import org.nstodc.database.type.Handler;
 import org.nstodc.database.type.Membership;
 import org.nstodc.database.type.ObedienceClass;
+import org.nstodc.ui.Constants;
 import org.nstodc.ui.UI;
 import org.nstodc.ui.UiUtils;
 
@@ -24,6 +25,7 @@ public class SearchDialog extends JDialog {
 
     private UI owner;
 
+    private JCheckBox primaryOnlyCB = new JCheckBox("Primary only");
     private JTextField membershipIdTF = new JTextField(10);
     private JTextField firstNameTF = new JTextField(10);
     private JTextField lastNameTF = new JTextField(10);
@@ -67,6 +69,7 @@ public class SearchDialog extends JDialog {
 
         UiUtils.sameWidth(membershipLabel, dogLabel, firstLabel, lastLabel);
 
+        centerInnerPanel.add(UiUtils.enFlow(primaryOnlyCB));
         centerInnerPanel.add(UiUtils.enFlow(membershipLabel, membershipIdTF));
         centerInnerPanel.add(UiUtils.enFlow(dogLabel, dogsNameTF));
         centerInnerPanel.add(UiUtils.enFlow(firstLabel, firstNameTF));
@@ -177,7 +180,7 @@ public class SearchDialog extends JDialog {
                 ableEditAdvanceButton();
             }
         });
-
+        primaryOnlyCB.setSelected(owner.getPreferences().getBoolean(Constants.SEARCH_PRIMARY, Constants.SEARCH_PRIMARY_DEFAULT));
         pack();
         setResizable(false);
 
@@ -279,10 +282,12 @@ public class SearchDialog extends JDialog {
                     dogCount++;
                     int handlerCount = 0;
                     for (Handler handler : owner.getDatabase().getHandlers()) {
-                        if (handler.getMembershipId() == membership.getMembershipId()) {
-                            Result r = new Result(membership.getMembershipId(), handler, dog);
-                            results.add(r);
-                            handlerCount++;
+                        if (!primaryOnlyCB.isSelected() || handler.isPrimary()) {
+                            if (handler.getMembershipId() == membership.getMembershipId()) {
+                                Result r = new Result(membership.getMembershipId(), handler, dog);
+                                results.add(r);
+                                handlerCount++;
+                            }
                         }
                     }
                     if (handlerCount == 0) {
@@ -296,10 +301,12 @@ public class SearchDialog extends JDialog {
                 // Membership with no dog?
                 int handlerCount = 0;
                 for (Handler handler : owner.getDatabase().getHandlers()) {
-                    if (handler.getMembershipId() == membership.getMembershipId()) {
-                        Result r = new Result(membership.getMembershipId(), handler, null);
-                        results.add(r);
-                        handlerCount++;
+                    if (!primaryOnlyCB.isSelected() || handler.isPrimary()) {
+                        if (handler.getMembershipId() == membership.getMembershipId()) {
+                            Result r = new Result(membership.getMembershipId(), handler, null);
+                            results.add(r);
+                            handlerCount++;
+                        }
                     }
                 }
                 if (handlerCount == 0) {
@@ -386,8 +393,10 @@ public class SearchDialog extends JDialog {
                     if (membership.getMembershipId() == dog.getMembershipId()) {
                         for (Handler handler : owner.getDatabase().getHandlers()) {
                             if (handler.getMembershipId() == membership.getMembershipId()) {
-                                Result r = new Result(membership.getMembershipId(), handler, dog);
-                                results.add(r);
+                                if (!primaryOnlyCB.isSelected() || handler.isPrimary() ) {
+                                    Result r = new Result(membership.getMembershipId(), handler, dog);
+                                    results.add(r);
+                                }
                             }
                         }
                     }
@@ -399,19 +408,21 @@ public class SearchDialog extends JDialog {
     private void sortLastName(Set<Result> results, String lastName) {
         for (Handler handler : owner.getDatabase().getHandlers()) {
             if (handler.getLastName().equalsIgnoreCase(lastName)) {
-                for (Membership membership : owner.getDatabase().getMemberships()) {
-                    if (membership.getMembershipId() == handler.getMembershipId()) {
-                        boolean gotDog = false;
-                        for (Dog dog : owner.getDatabase().getDogs()) {
-                            if (dog.getMembershipId() == membership.getMembershipId()) {
-                                Result r = new Result(membership.getMembershipId(), handler, dog);
-                                results.add(r);
-                                gotDog = true;
+                if (!primaryOnlyCB.isSelected() || handler.isPrimary() ) {
+                    for (Membership membership : owner.getDatabase().getMemberships()) {
+                        if (membership.getMembershipId() == handler.getMembershipId()) {
+                            boolean gotDog = false;
+                            for (Dog dog : owner.getDatabase().getDogs()) {
+                                if (dog.getMembershipId() == membership.getMembershipId()) {
+                                    Result r = new Result(membership.getMembershipId(), handler, dog);
+                                    results.add(r);
+                                    gotDog = true;
+                                }
                             }
-                        }
-                        if (!gotDog) {
-                            Result r = new Result(membership.getMembershipId(), handler, null);
-                            results.add(r);
+                            if (!gotDog) {
+                                Result r = new Result(membership.getMembershipId(), handler, null);
+                                results.add(r);
+                            }
                         }
                     }
                 }
@@ -422,19 +433,21 @@ public class SearchDialog extends JDialog {
     private void sortFirstName(Set<Result> results, String firstName) {
         for (Handler handler : owner.getDatabase().getHandlers()) {
             if (handler.getFirstName().equalsIgnoreCase(firstName)) {
-                for (Membership membership : owner.getDatabase().getMemberships()) {
-                    if (membership.getMembershipId() == handler.getMembershipId()) {
-                        boolean gotDog = false;
-                        for (Dog dog : owner.getDatabase().getDogs()) {
-                            if (dog.getMembershipId() == membership.getMembershipId()) {
-                                Result r = new Result(membership.getMembershipId(), handler, dog);
-                                results.add(r);
-                                gotDog = true;
+                if (!primaryOnlyCB.isSelected() || handler.isPrimary() ) {
+                    for (Membership membership : owner.getDatabase().getMemberships()) {
+                        if (membership.getMembershipId() == handler.getMembershipId()) {
+                            boolean gotDog = false;
+                            for (Dog dog : owner.getDatabase().getDogs()) {
+                                if (dog.getMembershipId() == membership.getMembershipId()) {
+                                    Result r = new Result(membership.getMembershipId(), handler, dog);
+                                    results.add(r);
+                                    gotDog = true;
+                                }
                             }
-                        }
-                        if (!gotDog) {
-                            Result r = new Result(membership.getMembershipId(), handler, null);
-                            results.add(r);
+                            if (!gotDog) {
+                                Result r = new Result(membership.getMembershipId(), handler, null);
+                                results.add(r);
+                            }
                         }
                     }
                 }
@@ -447,17 +460,19 @@ public class SearchDialog extends JDialog {
             if (membership.getMembershipId() == membershipId) {
                 for (Handler handler : owner.getDatabase().getHandlers()) {
                     if (handler.getMembershipId() == membershipId) {
-                        boolean gotDog = false;
-                        for (Dog dog : owner.getDatabase().getDogs()) {
-                            if (dog.getMembershipId() == membershipId) {
-                                Result r = new Result(membershipId, handler, dog);
-                                results.add(r);
-                                gotDog = true;
+                        if (!primaryOnlyCB.isSelected() || handler.isPrimary() ) {
+                            boolean gotDog = false;
+                            for (Dog dog : owner.getDatabase().getDogs()) {
+                                if (dog.getMembershipId() == membershipId) {
+                                    Result r = new Result(membershipId, handler, dog);
+                                    results.add(r);
+                                    gotDog = true;
+                                }
                             }
-                        }
-                        if (!gotDog) {
-                            Result r = new Result(membership.getMembershipId(), handler, null);
-                            results.add(r);
+                            if (!gotDog) {
+                                Result r = new Result(membership.getMembershipId(), handler, null);
+                                results.add(r);
+                            }
                         }
                     }
                 }
@@ -478,6 +493,7 @@ public class SearchDialog extends JDialog {
     public void dispose() {
         super.dispose();
         UiUtils.updateLocation(this, owner.getPreferences());
+        owner.getPreferences().putBoolean(Constants.SEARCH_PRIMARY, primaryOnlyCB.isSelected());
     }
 
     private class Result implements Comparable<Result> {
