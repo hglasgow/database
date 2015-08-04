@@ -28,7 +28,7 @@ import java.util.TreeMap;
 public class ObedienceClassDialog extends JDialog {
 
     private UI owner;
-    private final Map<Integer, ClassTuple> tuples = new TreeMap<Integer, ClassTuple>();
+    private final Map<Integer, ClassTuple> tuples = new TreeMap<>();
     
     public ObedienceClassDialog(UI owner) {
 
@@ -102,7 +102,7 @@ public class ObedienceClassDialog extends JDialog {
     private ObedienceBean createObedienceBean() {
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
-        Map<Integer, ObedienceClass> map = new TreeMap<Integer, ObedienceClass>();
+        Map<Integer, ObedienceClass> map = new TreeMap<>();
         for (ClassTuple tuple : tuples.values()) {
             SpinnerNumberModel m = (SpinnerNumberModel)(tuple.getSpinner().getModel());
             int v = m.getNumber().intValue();
@@ -110,7 +110,7 @@ public class ObedienceClassDialog extends JDialog {
                 map.put(10 * tuple.getObedienceClass().getListSequenceId() + i, tuple.getObedienceClass());
             }
         }
-        Map<String, Dog> dogsMap = new TreeMap<String, Dog>();
+        Map<String, Dog> dogsMap = new TreeMap<>();
         for (Dog dog : owner.getDatabase().getDogs()) {
             dogsMap.put(dog.getName() + Math.random(), dog);
         }

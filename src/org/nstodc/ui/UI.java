@@ -20,6 +20,7 @@ import org.nstodc.ui.membership.MembershipDialog;
 import org.nstodc.ui.reports.MembershipCountReportDialog;
 import org.nstodc.ui.reports.NewMembersByMonthDialog;
 import org.nstodc.ui.reports.ObedienceClassDialog;
+import org.nstodc.ui.reports.StatsDialog;
 import org.nstodc.ui.search.SearchDialog;
 
 import javax.swing.*;
@@ -35,7 +36,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import static java.awt.event.ActionEvent.*;
 import static org.nstodc.ui.Constants.*;
 
 /**
@@ -245,7 +245,7 @@ public class UI extends JFrame implements IOwner {
             JMenuItem addMenuItem = new JMenuItem("Add Membership...");
             fileMenu.add(addMenuItem);
             addMenuItem.setMnemonic(KeyEvent.VK_A);
-            addMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, CTRL_MASK));
+            addMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
             addMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     addMembership();
@@ -256,7 +256,7 @@ public class UI extends JFrame implements IOwner {
             JMenuItem searchMenuItem = new JMenuItem("Search...");
             fileMenu.add(searchMenuItem);
             searchMenuItem.setMnemonic(KeyEvent.VK_E);
-            searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, CTRL_MASK));
+            searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
             searchMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     SearchDialog d = new SearchDialog(UI.this);
@@ -267,7 +267,7 @@ public class UI extends JFrame implements IOwner {
             // Latest
             fileMenu.add(latestMenuItem);
             latestMenuItem.setMnemonic(KeyEvent.VK_L);
-            latestMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, CTRL_MASK));
+            latestMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK));
             latestMenuItem.setEnabled(false);
             latestMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -281,7 +281,7 @@ public class UI extends JFrame implements IOwner {
             JMenuItem saveMenuItem = new JMenuItem("Save");
             fileMenu.add(saveMenuItem);
             saveMenuItem.setMnemonic(KeyEvent.VK_S);
-            saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, CTRL_MASK));
+            saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
             saveMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     saveDatabase();
@@ -315,7 +315,7 @@ public class UI extends JFrame implements IOwner {
         JMenuItem exitMenuItem = new JMenuItem("Exit");
         fileMenu.add(exitMenuItem);
         exitMenuItem.setMnemonic(KeyEvent.VK_X);
-        exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ALT_MASK));
+        exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK));
         exitMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tryToClose();
@@ -445,7 +445,152 @@ public class UI extends JFrame implements IOwner {
                     membershipCountReport();
                 }
             });
+
+            // Stats
+            JMenuItem statsItem = new JMenuItem("Statistics...");
+            reportsMenu.add(statsItem);
+            statsItem.setMnemonic(KeyEvent.VK_S);
+            statsItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    statsReport();
+                }
+            });
         }
+    }
+
+    private void statsReport() {
+        Map<Integer, String> names = createNamesStats();
+        Map<Integer, String> breeds = createBreedsStats();
+        Map<Integer, String> suburbs = createSuburbsStats();
+        showStats(names, breeds, suburbs);
+    }
+
+    private void showStats(Map<Integer, String> names, Map<Integer, String> breeds, Map<Integer, String> suburbs) {
+        StatsDialog d = new StatsDialog(this, names, breeds, suburbs);
+        d.setVisible(true);
+    }
+
+    private Map<Integer, String> createSuburbsStats() {
+        Map<Integer, Integer> suburbs = new TreeMap<>();
+        for (Membership membership : database.getMemberships()) {
+            boolean currentDog = false;
+            for (Dog dog : database.getDogs()) {
+                if (dog.getMembershipId() == membership.getMembershipId() &&
+                        dog.getMembershipYear() >= UiUtils.defaultYear()) {
+                    currentDog = true;
+                    break;
+                }
+            }
+            if (currentDog) {
+                if (!suburbs.containsKey(membership.getSuburbId())) {
+                    suburbs.put(membership.getSuburbId(), 0);
+                }
+                suburbs.put(membership.getSuburbId(), suburbs.get(membership.getSuburbId()) + 1);
+            }
+        }
+
+        Map<Integer, Integer> intermediates = new TreeMap<>();
+        int i = 0;
+        do {
+            int suburb = 0;
+            int count = 0;
+            for (Map.Entry<Integer, Integer> entry : suburbs.entrySet()) {
+                if (!intermediates.values().contains(entry.getKey())) {
+                    if (entry.getValue() > count) {
+                        count = entry.getValue();
+                        suburb = entry.getKey();
+                    }
+                }
+            }
+            intermediates.put(i, suburb);
+        } while (i++ < 13);
+
+        i = 0;
+        Map<Integer, String> results = new TreeMap<>();
+        for (Integer integer : intermediates.values()) {
+            for (Suburb suburb : database.getSuburbs()) {
+                if (suburb.getSuburbId() == integer) {
+                    results.put(i++, suburb.getSuburb());
+                }
+            }
+        }
+        return results;
+    }
+
+    private Map<Integer, String> createBreedsStats() {
+
+        Map<Integer, Integer> breeds = new TreeMap<>();
+        for (Membership membership : database.getMemberships()) {
+            for (Dog dog : database.getDogs()) {
+                if (dog.getMembershipId() == membership.getMembershipId() &&
+                        dog.getMembershipYear() >= UiUtils.defaultYear()) {
+                    if (!breeds.containsKey(dog.getBreedId())) {
+                        breeds.put(dog.getBreedId(), 0);
+                    }
+                    breeds.put(dog.getBreedId(), breeds.get(dog.getBreedId()) + 1);
+                }
+            }
+        }
+
+        Map<Integer, Integer> intermediates = new TreeMap<>();
+        int i = 0;
+        do {
+            int breed = 0;
+            int count = 0;
+            for (Map.Entry<Integer, Integer> entry : breeds.entrySet()) {
+                if (!intermediates.values().contains(entry.getKey())) {
+                    if (entry.getValue() > count) {
+                        count = entry.getValue();
+                        breed = entry.getKey();
+                    }
+                }
+            }
+            intermediates.put(i, breed);
+        } while (i++ < 13);
+
+        i = 0;
+        Map<Integer, String> results = new TreeMap<>();
+        for (Integer integer : intermediates.values()) {
+            for (Breed breed : database.getBreeds()) {
+                if (breed.getBreedId() == integer) {
+                    results.put(i++, breed.getBreed());
+                }
+            }
+        }
+        return results;
+
+    }
+
+    private Map<Integer, String> createNamesStats() {
+
+        Map<String, Integer> names = new TreeMap<>();
+        for (Membership membership : database.getMemberships()) {
+            for (Dog dog : database.getDogs()) {
+                if (dog.getMembershipId() == membership.getMembershipId() &&
+                        dog.getMembershipYear() >= UiUtils.defaultYear()) {
+                    if (!names.containsKey(dog.getName())) {
+                        names.put(dog.getName(), 0);
+                    }
+                    names.put(dog.getName(), names.get(dog.getName()) + 1);
+                }
+            }
+        }
+        Map<Integer, String> results = new TreeMap<>();
+        int i = 0;
+        do {
+            String name = "";
+            int count = 0;
+            for (Map.Entry<String, Integer> entry : names.entrySet()) {
+                if (!results.values().contains(entry.getKey())) {
+                    if (entry.getValue() > count) {
+                        count = entry.getValue();
+                        name = entry.getKey();
+                    }
+                }
+            }
+            results.put(i, name);
+        } while (i++ < 12);
+        return results;
     }
 
     private void membershipCountReport() {
@@ -756,12 +901,9 @@ public class UI extends JFrame implements IOwner {
             // Primary
             String fileLocation = preferences.get(Constants.DATABASE_FILE_LOCATION, Constants.DATABASE_FILE_LOCATION_DEFAULT);
             try {
-                PrintWriter pw = new PrintWriter(new FileWriter(new File(fileLocation, Constants.DATABASE_FILE_NAME)));
-                try {
+                try (PrintWriter pw = new PrintWriter(new FileWriter(new File(fileLocation, Constants.DATABASE_FILE_NAME)))) {
                     pw.println(xml);
                     pw.flush();
-                } finally {
-                    pw.close();
                 }
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(UI.this, "Could not save database at " + fileLocation + ".",

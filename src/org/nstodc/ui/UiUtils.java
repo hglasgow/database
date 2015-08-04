@@ -107,7 +107,7 @@ public class UiUtils {
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
         if (cal.get(Calendar.MONTH) == Calendar.NOVEMBER || cal.get(Calendar.MONTH) == Calendar.DECEMBER) {
-            // Probably going to be next year's membership.
+            // Next calendar year.
             return year + 1;
         }
         return year;
