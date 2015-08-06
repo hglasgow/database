@@ -27,6 +27,7 @@ public class DogDialog extends JDialog implements IOwner {
 
     private final MembershipDialog owner;
     private final Dog dog;
+    private final boolean nyoo;
 
     private final JTextField dogNameTF = new JTextField(20);
     private final JTextField dogMembershipYearTF = new JTextField(10);
@@ -49,6 +50,8 @@ public class DogDialog extends JDialog implements IOwner {
         super(owner, (nyoo ? "Add" : "Update") + " Dog", true);
         this.owner = owner;
         this.dog = dog;
+        this.nyoo = nyoo;
+
         UiUtils.locateAndCrippleClose(this, owner.getPreferences());
 
         getContentPane().setLayout(new BorderLayout());
@@ -181,10 +184,12 @@ public class DogDialog extends JDialog implements IOwner {
         }
         breedListModel.removeAllElements();
         for (Breed breed : m.values()) {
-            BreedWrapper w = new BreedWrapper(breed);
-            breedListModel.addElement(w);
-            if (dog.getBreedId() == breed.getBreedId()) {
-                breedListModel.setSelectedItem(w);
+            if (!nyoo || breed.isActive()) {
+                BreedWrapper w = new BreedWrapper(breed);
+                breedListModel.addElement(w);
+                if (dog.getBreedId() == breed.getBreedId()) {
+                    breedListModel.setSelectedItem(w);
+                }
             }
         }
     }

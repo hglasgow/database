@@ -179,13 +179,9 @@ public class BreedsDialog extends JDialog {
             this.breed = breed;
         }
 
-        public Breed getBreed() {
-            return breed;
-        }
-
         @Override
         public String toString() {
-            return breed.getBreed();
+            return breed.getBreed() + " (" + (breed.isActive() ? "active" : "inactive") + ")" ;
         }
     }
 

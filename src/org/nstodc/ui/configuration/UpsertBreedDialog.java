@@ -16,8 +16,8 @@ public class UpsertBreedDialog extends JDialog {
 
     private final BreedsDialog owner;
     private final Breed breed;
-
     private final JTextField breedNameTF = new JTextField(20);
+    private final JCheckBox activeCB = new JCheckBox("Active");
 
     public UpsertBreedDialog(BreedsDialog owner, final boolean nyoo, final Breed breed) {
         super(owner, (nyoo ? "Add" : "Update") + " Breed", true);
@@ -37,8 +37,10 @@ public class UpsertBreedDialog extends JDialog {
         getContentPane().add(centerOuterPanel, BorderLayout.CENTER);
 
         centerInnerPanel.add(UiUtils.enFlow(new JLabel("Name"), breedNameTF));
+        centerInnerPanel.add(UiUtils.enFlow(activeCB));
 
         breedNameTF.setText(breed.getBreed());
+        activeCB.setSelected(breed.isActive());
 
         //////////
         // East //
@@ -50,6 +52,7 @@ public class UpsertBreedDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 if (validateIt()) {
                     breed.setBreed(breedNameTF.getText().trim().toUpperCase());
+                    breed.setActive(activeCB.isSelected());
 
                     if (nyoo) {
                         saveNew();
