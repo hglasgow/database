@@ -27,6 +27,8 @@ public class ObediencePrintable implements Printable {
 
         FontMetrics metrics = graphics.getFontMetrics(plain);
         int lineHeight = metrics.getHeight();
+        int lineAscent = metrics.getAscent();
+        int lineDescent = metrics.getDescent();
         int linesPerPage = (int) (pageFormat.getImageableHeight() / lineHeight);
         int pageWidth = (int) pageFormat.getImageableWidth();
         if (blocks.size() == 0) {
@@ -42,13 +44,13 @@ public class ObediencePrintable implements Printable {
         Graphics2D g2d = (Graphics2D) graphics;
         g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
-        printBlock(pageIndex, lineHeight, graphics, pageWidth, metrics);
+        printBlock(pageIndex, lineHeight, graphics, pageWidth, metrics, lineAscent, lineDescent);
 
         // Tell the caller that this page is part of the printed document.
         return PAGE_EXISTS;
     }
 
-    private void printBlock(int blockIndex, int lineHeight, Graphics graphics, int pageWidth, FontMetrics metrics) {
+    private void printBlock(int blockIndex, int lineHeight, Graphics graphics, int pageWidth, FontMetrics metrics, int lineAscent, int lineDescent) {
         graphics.setFont(bold);
         Block block = blocks.get(blockIndex);
         int y = 0;
@@ -79,34 +81,35 @@ public class ObediencePrintable implements Printable {
         boolean odd = true;
         for (PrintLine printLine : block.getPrintLines().values()) {
             y += lineHeight;
-            graphics.drawString(trimAndPad(String.valueOf(printLine.getA().getMembershipNumber()), metrics, pageWidth / 11, odd), pageWidth / 11, y);
-            graphics.drawString(trimAndPad(printLine.getA().getFirstName() + " " + printLine.getA().getLastName(), metrics, 2 * pageWidth / 11, odd), 2 * pageWidth / 11, y);
-            graphics.drawString(trimAndPad(printLine.getA().getDogsName(), metrics, pageWidth / 11, odd), 4 * pageWidth / 11, y);
-            graphics.drawRect(5 * pageWidth / 11, y, lineHeight / 2, - lineHeight / 2);
+            if (odd) {
+                graphics.setColor(Color.lightGray);
+                graphics.fillRect(pageWidth / 11, y + lineDescent, 4 * pageWidth / 11, -lineAscent);
+                graphics.setColor(Color.black);
+            }
+            graphics.drawString(trim(String.valueOf(printLine.getA().getMembershipNumber()), metrics, pageWidth / 11), pageWidth / 11, y);
+            graphics.drawString(trim(printLine.getA().getFirstName() + " " + printLine.getA().getLastName(), metrics, 2 * pageWidth / 11), 2 * pageWidth / 11, y);
+            graphics.drawString(trim(printLine.getA().getDogsName(), metrics, pageWidth / 11), 4 * pageWidth / 11, y);
+            graphics.drawRect(5 * pageWidth / 11, y + lineDescent, lineAscent, -lineAscent);
             if (printLine.getB() != null) {
-                graphics.drawString(trimAndPad(String.valueOf(printLine.getB().getMembershipNumber()), metrics, pageWidth / 11, odd), 6 * pageWidth / 11,  y);
-                graphics.drawString(trimAndPad(printLine.getB().getFirstName() + " " + printLine.getB().getLastName(), metrics, 2 * pageWidth / 11, odd), 7 * pageWidth / 11, y);
-                graphics.drawString(trimAndPad(printLine.getB().getDogsName(), metrics, pageWidth / 11, odd), 9 * pageWidth / 11, y);
-                graphics.drawRect(10 * pageWidth / 11, y, lineHeight / 2, - lineHeight / 2);
+                if (odd) {
+                    graphics.setColor(Color.lightGray);
+                    graphics.fillRect(6 * pageWidth / 11, y + lineDescent, 4 * pageWidth / 11, -lineAscent);
+                    graphics.setColor(Color.black);
+                }
+                graphics.drawString(trim(String.valueOf(printLine.getB().getMembershipNumber()), metrics, pageWidth / 11), 6 * pageWidth / 11,  y);
+                graphics.drawString(trim(printLine.getB().getFirstName() + " " + printLine.getB().getLastName(), metrics, 2 * pageWidth / 11), 7 * pageWidth / 11, y);
+                graphics.drawString(trim(printLine.getB().getDogsName(), metrics, pageWidth / 11), 9 * pageWidth / 11, y);
+                graphics.drawRect(10 * pageWidth / 11, y + lineDescent, lineAscent, -lineAscent);
             }
             odd = !odd;
         }
     }
 
-    private String trimAndPad(String text, FontMetrics metrics, int size, boolean pad) {
-        String localText;
-        if (pad) {
-            localText = text + " ....................................";
-        } else {
-            localText = text;
+    private String trim(String text, FontMetrics metrics, int size) {
+        while (metrics.charsWidth(text.toCharArray(), 0, text.length()) > size) {
+            text = text.substring(0, text.length() - 1);
         }
-        while (metrics.charsWidth(localText.toCharArray(), 0, localText.length()) > size) {
-            localText = localText.substring(0, localText.length() - 1);
-        }
-        if (localText.endsWith(".")) {
-            localText = localText.substring(0, localText.length() - 1);
-        }
-        return localText;
+        return text;
     }
 
     private void initializeBlocks(int linesPerPage) {
