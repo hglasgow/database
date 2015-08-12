@@ -184,6 +184,12 @@ public class SearchDialog extends JDialog {
         pack();
         setResizable(false);
 
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                membershipIdTF.requestFocus();
+            }
+        });
+
     }
 
     private void advance() {
