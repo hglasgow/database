@@ -23,6 +23,7 @@ public class Constants {
     public static final String DATABASE_FILE_LOCATION = "f";
     public static final String DATABASE_FILE_LOCATION_DEFAULT = "C:\\data";
     public static final String DATABASE_FILE_NAME = "database.xml";
+    public static final String MEMBERSHIP_SPREADSHEET_FILE_NAME = "membership.xls";
 
     public static final String DATABASE_BACKUP_NAME = "database.bak";
 

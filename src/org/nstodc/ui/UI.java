@@ -62,7 +62,7 @@ public class UI extends JFrame implements IOwner {
         } catch (Exception e) {
             // Don't care.
         }
-        latestMenuItem= new JMenuItem("Edit Latest...");
+        latestMenuItem = new JMenuItem("Edit Latest...");
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 tryToClose();
@@ -185,7 +185,7 @@ public class UI extends JFrame implements IOwner {
             }
 
             // Decode
-            final Dialog d = showProgressDialog();
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
                 XStream xstream = new XStream(new DomDriver());
                 database = (Database) xstream.fromXML(sb.toString());
@@ -195,7 +195,7 @@ public class UI extends JFrame implements IOwner {
                         "Error", JOptionPane.ERROR_MESSAGE);
                 success = false;
             } finally {
-                d.setVisible(false);
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         }
 
@@ -207,26 +207,6 @@ public class UI extends JFrame implements IOwner {
                 doMenu();
             }
         });
-    }
-
-    private Dialog showProgressDialog() {
-        final JDialog dlg = new JDialog(this, "Please Wait", true);
-        JProgressBar dpb = new JProgressBar();
-        dpb.setIndeterminate(true);
-        dpb.setPreferredSize(new Dimension(150, 20));
-        dlg.add(BorderLayout.CENTER, dpb);
-        dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        dlg.setUndecorated(true);
-        dlg.pack();
-        dlg.setLocationRelativeTo(this);
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                dlg.setVisible(true);
-            }
-        };
-        t.start();
-        return dlg;
     }
 
     private void doMenu() {
@@ -726,23 +706,6 @@ public class UI extends JFrame implements IOwner {
 
     private void vanReport() {
         VanBean vb = createVanBean();
-//        try {
-//            PrintWriter pw = new PrintWriter(new FileWriter("q.csv"));
-//            for (Map.Entry<String, VanDetailEntry> entry : vb.getEntries().entrySet()) {
-//                VanDetailEntry value = entry.getValue();
-//                pw.println("\"" +
-//                                value.getFirstName() + "\",\"" +
-//                                value.getLastName() + "\",\"" +
-//                                value.getAddress() + "\",\"" +
-//                                value.getSuburb() + "\",\"" +
-//                                value.getPostcode() + "\",\"" +
-//                                "\""
-//                );
-//            }
-//            pw.flush();
-//            pw.close();
-//        } catch (Exception e) {
-//        }
         printVanReport(vb);
     }
 
@@ -923,32 +886,270 @@ public class UI extends JFrame implements IOwner {
 
         database.setLastArchived(Calendar.getInstance().getTime());
 
-        PrintWriter pw;
-        String archiveLocation = preferences.get(Constants.ARCHIVE_FILE_LOCATION, "");
+        final String archiveLocation = preferences.get(Constants.ARCHIVE_FILE_LOCATION, "");
         if (archiveLocation.length() == 0) {
             JOptionPane.showMessageDialog(UI.this, "Archive location has not been configured.",
                     "Warning", JOptionPane.WARNING_MESSAGE);
         } else {
-            File archiveLocationDirectory = new File(archiveLocation);
+            final File archiveLocationDirectory = new File(archiveLocation);
             if (!archiveLocationDirectory.exists() || !archiveLocationDirectory.isDirectory()) {
                 JOptionPane.showMessageDialog(UI.this, "Archive location is invalid.",
                         "Warning", JOptionPane.WARNING_MESSAGE);
             } else {
-                try {
-                    pw = new PrintWriter(new FileWriter(new File(archiveLocation, Constants.DATABASE_FILE_NAME)));
-                    try {
-                        XStream xstream = new XStream(new DomDriver());
-                        String xml = xstream.toXML(database);
-                        pw.println(xml);
-                        pw.flush();
-                    } finally {
-                        pw.close();
+                for (int i = 0; i < getJMenuBar().getMenuCount(); i++) {
+                    getJMenuBar().getMenu(i).setEnabled(false);
+                }
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                SwingUtilities.invokeLater(new Runnable() {
+                                               public void run() {
+                                                   try {
+                                                       WriteArchiveDatabase(archiveLocation);
+                                                       WriteArchiveSpreadSheet(archiveLocation);
+                                                   } catch (Exception e) {
+                                                       e.printStackTrace();
+                                                   } finally {
+                                                       for (int i = 0; i < getJMenuBar().getMenuCount(); i++) {
+                                                           getJMenuBar().getMenu(i).setEnabled(true);
+                                                       }
+                                                       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                                                   }
+                                               }
+                                           }
+                );
+            }
+        }
+    }
+
+    private void WriteArchiveSpreadSheet(String archiveLocation) {
+        try {
+            Workbook wb = new HSSFWorkbook();
+            Sheet sheet1 = wb.createSheet("Sheet 1");
+
+            Row headings = sheet1.createRow(0);
+            Cell cell = headings.createCell(0);
+            cell.setCellValue("Type");
+            cell = headings.createCell(1);
+            cell.setCellValue("Address");
+            cell = headings.createCell(2);
+            cell.setCellValue("Suburb");
+            cell = headings.createCell(3);
+            cell.setCellValue("Postcode");
+            cell = headings.createCell(4);
+            cell.setCellValue("Phone");
+            cell = headings.createCell(5);
+            cell.setCellValue("Mobile");
+            cell = headings.createCell(6);
+            cell.setCellValue("Email");
+            cell = headings.createCell(7);
+            cell.setCellValue("First");
+            cell = headings.createCell(8);
+            cell.setCellValue("Last");
+            cell = headings.createCell(9);
+            cell.setCellValue("CRN");
+            cell = headings.createCell(10);
+            cell.setCellValue("Primary");
+            cell = headings.createCell(11);
+            cell.setCellValue("Dog");
+            cell = headings.createCell(12);
+            cell.setCellValue("Year");
+            cell = headings.createCell(13);
+            cell.setCellValue("DOB");
+            cell = headings.createCell(14);
+            cell.setCellValue("Breed");
+            cell = headings.createCell(15);
+            cell.setCellValue("Cross");
+            cell = headings.createCell(16);
+            cell.setCellValue("Gender");
+            cell = headings.createCell(17);
+            cell.setCellValue("Sterile");
+            cell = headings.createCell(18);
+            cell.setCellValue("Obedience");
+            cell = headings.createCell(19);
+            cell.setCellValue("Agility");
+            cell = headings.createCell(20);
+            cell.setCellValue("DWD");
+            cell = headings.createCell(21);
+            cell.setCellValue("Class");
+
+            int rowNumber = 1;
+            for (Membership membership : database.getMemberships()) {
+                for (Handler handler : database.getHandlers()) {
+                    if (handler.getMembershipId() == membership.getMembershipId()) {
+                        for (Dog dog : database.getDogs()) {
+                            if (dog.getMembershipYear() >= UiUtils.defaultYear()) {
+                                if (dog.getMembershipId() == membership.getMembershipId()) {
+                                    writeSpreadSheetRow(sheet1, rowNumber++, membership, handler, dog);
+                                }
+                            }
+                        }
                     }
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(UI.this, "Could not archive database to " + archiveLocation + ".",
-                            "Warning", JOptionPane.WARNING_MESSAGE);
                 }
             }
+
+            File spreadSheetFile = new File(archiveLocation, Constants.MEMBERSHIP_SPREADSHEET_FILE_NAME);
+            FileOutputStream fileOut = new FileOutputStream(spreadSheetFile);
+            wb.write(fileOut);
+            fileOut.close();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(UI.this, "Could not archive membership spread sheet to " + archiveLocation + ".",
+                    "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void writeSpreadSheetRow(Sheet sheet, int rowNumber, Membership membership, Handler handler, Dog dog) {
+        String membershipType = "";
+        for (MembershipType type : database.getMembershipTypes()) {
+            if (type.getMembershipTypeId() == membership.getMembershipTypeId()) {
+                membershipType = type.getMembershipType();
+            }
+        }
+        String suburbName = "";
+        String postcode = "";
+        for (Suburb suburb : database.getSuburbs()) {
+            if (suburb.getSuburbId() == membership.getSuburbId()) {
+                suburbName = suburb.getSuburb();
+                postcode = suburb.getPostcode();
+            }
+        }
+
+        String dogName = "";
+        String year = "";
+        String dob = "";
+        String breed = "";
+        String cross = "";
+        String gender = "";
+        String sterile = "";
+        String obedience = "";
+        String agility = "";
+        String dwd = "";
+        String clazz = "";
+
+        if (dog != null) {
+            dogName = dog.getName();
+            year = String.valueOf(dog.getMembershipYear());
+            dob = dog.getDateOfBirth();
+            for (Breed breed1 : database.getBreeds()) {
+                if (dog.getBreedId() == breed1.getBreedId()) {
+                    breed = breed1.getBreed();
+                }
+            }
+            cross = dog.isCrossBreed() ? "Y" : "N";
+            gender = dog.isMale() ? "M" : "F";
+            sterile = dog.isSterilized() ? "Y" : "N";
+            obedience = dog.isDoesObedience() ? "Y" : "N";
+            agility = dog.isDoesAgility() ? "Y" : "N";
+            dwd = dog.isDoesDwd() ? "Y" : "N";
+            if (dog.isDoesObedience()) {
+                for (ObedienceClass aClass : database.getObedienceClasses()) {
+                    if (aClass.getObedienceClassId() == dog.getObedienceClassId()) {
+                        clazz = aClass.getObedienceClass();
+                    }
+                }
+            }
+        }
+
+        Row row = sheet.createRow(rowNumber);
+
+        Cell cell = row.createCell(0);
+        cell.setCellValue(purify(membershipType));
+
+        cell = row.createCell(1);
+        cell.setCellValue(purify(membership.getAddress()));
+
+        cell = row.createCell(2);
+        cell.setCellValue(purify(suburbName));
+
+        cell = row.createCell(3);
+        cell.setCellValue(purify(postcode));
+
+        cell = row.createCell(4);
+        cell.setCellValue(membership.getPhone());
+
+        cell = row.createCell(5);
+        cell.setCellValue(membership.getMobile());
+
+        cell = row.createCell(6);
+        cell.setCellValue(membership.getEmail());
+
+        cell = row.createCell(7);
+        cell.setCellValue(handler.getFirstName());
+
+        cell = row.createCell(8);
+        cell.setCellValue(handler.getLastName());
+
+        cell = row.createCell(9);
+        cell.setCellValue(handler.getCrn());
+
+        cell = row.createCell(10);
+        cell.setCellValue(handler.isPrimary() ? "Y" : "N");
+
+        cell = row.createCell(11);
+        cell.setCellValue(dogName);
+
+        cell = row.createCell(12);
+        cell.setCellValue(year);
+
+        cell = row.createCell(13);
+        cell.setCellValue(dob);
+
+        cell = row.createCell(14);
+        cell.setCellValue(breed);
+
+        cell = row.createCell(15);
+        cell.setCellValue(cross);
+
+        cell = row.createCell(16);
+        cell.setCellValue(gender);
+
+        cell = row.createCell(17);
+        cell.setCellValue(sterile);
+
+        cell = row.createCell(18);
+        cell.setCellValue(obedience);
+
+        cell = row.createCell(19);
+        cell.setCellValue(agility);
+
+        cell = row.createCell(20);
+        cell.setCellValue(dwd);
+
+        cell = row.createCell(21);
+        cell.setCellValue(clazz);
+    }
+
+    private boolean dogsExist(int membershipId) {
+        for (Dog dog : database.getDogs()) {
+            if (dog.getMembershipId() == membershipId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean handlersExist(int membershipId) {
+        for (Handler handler : database.getHandlers()) {
+            if (handler.getMembershipId() == membershipId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void WriteArchiveDatabase(String archiveLocation) {
+        PrintWriter pw;
+        try {
+            pw = new PrintWriter(new FileWriter(new File(archiveLocation, Constants.DATABASE_FILE_NAME)));
+            try {
+                XStream xstream = new XStream(new DomDriver());
+                String xml = xstream.toXML(database);
+                pw.println(xml);
+                pw.flush();
+            } finally {
+                pw.close();
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(UI.this, "Could not archive database to " + archiveLocation + ".",
+                    "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -960,7 +1161,7 @@ public class UI extends JFrame implements IOwner {
         Thread t = new Thread() {
             @Override
             public void run() {
-                final Dialog d = showProgressDialog();
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try {
                     XStream xstream = new XStream(new DomDriver());
                     String xml = xstream.toXML(database);
@@ -979,7 +1180,7 @@ public class UI extends JFrame implements IOwner {
                                 "Warning", JOptionPane.WARNING_MESSAGE);
                     }
                 } finally {
-                    d.setVisible(false);
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
             }
         };
@@ -1030,7 +1231,7 @@ public class UI extends JFrame implements IOwner {
     }
 
     private class SponsorshipReportLine {
-        
+
         private final String lastName;
         private final String firstName;
         private final String phone;
