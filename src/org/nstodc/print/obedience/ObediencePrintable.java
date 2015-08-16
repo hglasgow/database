@@ -15,7 +15,7 @@ import java.util.TreeMap;
 public class ObediencePrintable implements Printable {
     
     private final ObedienceBean obedienceBean;
-    private final Map<Integer, Block> blocks = new TreeMap<Integer, Block>();
+    private final Map<Integer, Block> blocks = new TreeMap<>();
     private final Font plain = new Font("Serif", Font.PLAIN, 10);
     private final Font bold = new Font("Serif", Font.BOLD, 10);
     public ObediencePrintable(ObedienceBean obedienceBean) {
@@ -148,7 +148,7 @@ public class ObediencePrintable implements Printable {
 
     private class Block {
 
-        private final Map<Integer, PrintLine> printLines = new TreeMap<Integer, PrintLine>();
+        private final Map<Integer, PrintLine> printLines = new TreeMap<>();
         private final String className;
         public Map<Integer, PrintLine> getPrintLines() {
             return printLines;

@@ -27,8 +27,8 @@ import java.util.prefs.Preferences;
 public class BreedsDialog extends JDialog {
 
     private IOwner owner;
-    private final DefaultListModel<BreedWrapper> breedsListModel = new DefaultListModel<BreedWrapper>();
-    private final JList<BreedWrapper> breedsList = new JList<BreedWrapper>(breedsListModel);;
+    private final DefaultListModel<BreedWrapper> breedsListModel = new DefaultListModel<>();
+    private final JList<BreedWrapper> breedsList = new JList<>(breedsListModel);
     private final JButton editButton = new JButton("Edit");
 
     public BreedsDialog(DogDialog owner) {
@@ -69,7 +69,7 @@ public class BreedsDialog extends JDialog {
         breedsScrollPane.setViewportView(breedsList);
         getContentPane().add(UiUtils.enFlow(breedsScrollPane), BorderLayout.CENTER);
 
-        Map<String, Breed> map = new TreeMap<String, Breed>();
+        Map<String, Breed> map = new TreeMap<>();
         for (Breed breed : owner.getDatabase().getBreeds()) {
             map.put(breed.getBreed(), breed);
         }

@@ -11,11 +11,8 @@ import java.util.Map;
 
 public class StatsDialog extends JDialog {
 
-    private UI owner;
-
     public StatsDialog(UI owner, Map<Integer, String> names, Map<Integer, String> breeds, Map<Integer, String> suburbs) {
         super(owner, "Stats", null);
-        this.owner = owner;
         UiUtils.locateAndCrippleClose(this, owner.getPreferences());
         getContentPane().setLayout(new BorderLayout());
 
@@ -29,7 +26,7 @@ public class StatsDialog extends JDialog {
         JScrollPane scroller = new JScrollPane(area);
         center.add(scroller);
         scroller.setPreferredSize(new Dimension(200, 200));
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("Most Popular Names\n");
         for (String s : names.values()) {
             sb.append(s).append("\n");

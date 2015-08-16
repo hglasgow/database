@@ -34,8 +34,8 @@ public class SearchDialog extends JDialog {
     private JButton editButton = new JButton("Edit");
     private boolean lastSearchByDog;
 
-    private final DefaultListModel<Result> resultsListModel = new DefaultListModel<Result>();
-    JList<Result> resultsList = new JList<Result>(resultsListModel);
+    private final DefaultListModel<Result> resultsListModel = new DefaultListModel<>();
+    JList<Result> resultsList = new JList<>(resultsListModel);
 
     public SearchDialog(final UI owner) {
         super(owner, "Search", true);
@@ -198,7 +198,7 @@ public class SearchDialog extends JDialog {
             Result result = resultsListModel.getElementAt(index);
             Dog dog = result.dog;
             if (dog != null) {
-                Map<Integer, ObedienceClass> m = new TreeMap<Integer, ObedienceClass>();
+                Map<Integer, ObedienceClass> m = new TreeMap<>();
                 ObedienceClass currentClass = null;
                 for (ObedienceClass obedienceClass : owner.getDatabase().getObedienceClasses()) {
                     m.put(obedienceClass.getListSequenceId(), obedienceClass);
@@ -275,11 +275,11 @@ public class SearchDialog extends JDialog {
         firstNameTF.setText("");
         lastNameTF.setText("");
 
-        Map<Integer, Membership> map = new TreeMap<Integer, Membership>();
+        Map<Integer, Membership> map = new TreeMap<>();
         for (Membership membership : owner.getDatabase().getMemberships()) {
             map.put(-membership.getMembershipId(), membership);
         }
-        Set<Result> results = new TreeSet<Result>();
+        Set<Result> results = new TreeSet<>();
         int count = 0;
         for (Membership membership : map.values()) {
             int dogCount = 0;
@@ -364,9 +364,11 @@ public class SearchDialog extends JDialog {
         try {
             membershipId = Integer.parseInt(membershipIdTF.getText().trim());
         } catch (NumberFormatException e) {
+
+            // Don't care
         }
 
-        Set<Result> results = new TreeSet<Result>();
+        Set<Result> results = new TreeSet<>();
         lastSearchByDog = false;
 
         if (membershipId >= 0) {

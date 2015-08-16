@@ -27,21 +27,20 @@ public class DogDialog extends JDialog implements IOwner {
 
     private final MembershipDialog owner;
     private final Dog dog;
-    private final boolean nyoo;
 
     private final JTextField dogNameTF = new JTextField(20);
     private final JTextField dogMembershipYearTF = new JTextField(10);
     private final JTextField dogDobTF = new JTextField(10);
-    private final DefaultComboBoxModel<BreedWrapper> breedListModel = new DefaultComboBoxModel<BreedWrapper>();
-    private final JComboBox<BreedWrapper> breedList = new JComboBox<BreedWrapper>(breedListModel);
+    private final DefaultComboBoxModel<BreedWrapper> breedListModel = new DefaultComboBoxModel<>();
+    private final JComboBox<BreedWrapper> breedList = new JComboBox<>(breedListModel);
     private final JCheckBox dogCrossBreedCB = new JCheckBox("Cross breed");
     private final JCheckBox dogSterilizedCB = new JCheckBox("Sterilized");
     private final JRadioButton dogGenderMaleRB = new JRadioButton("Male");
     private final JCheckBox dogObedienceCB = new JCheckBox("Obedience");
     private final JCheckBox dogAgilityCB = new JCheckBox("Agility");
     private final JCheckBox dogDwdCB = new JCheckBox("DWD");
-    private final DefaultComboBoxModel<ObedienceClassWrapper> obedienceClassModel = new DefaultComboBoxModel<ObedienceClassWrapper>();
-    private final JComboBox<ObedienceClassWrapper> obedienceClassCombo = new JComboBox<ObedienceClassWrapper>(obedienceClassModel);
+    private final DefaultComboBoxModel<ObedienceClassWrapper> obedienceClassModel = new DefaultComboBoxModel<>();
+    private final JComboBox<ObedienceClassWrapper> obedienceClassCombo = new JComboBox<>(obedienceClassModel);
     private final JTextField backfillWeeksTF = new JTextField(10);
     private final JTextField backfillMonthsTF = new JTextField(10);
     private final JTextField backfillYearsTF = new JTextField(10);
@@ -50,7 +49,6 @@ public class DogDialog extends JDialog implements IOwner {
         super(owner, (nyoo ? "Add" : "Update") + " Dog", true);
         this.owner = owner;
         this.dog = dog;
-        this.nyoo = nyoo;
 
         UiUtils.locateAndCrippleClose(this, owner.getPreferences());
 
@@ -84,7 +82,7 @@ public class DogDialog extends JDialog implements IOwner {
         centerInnerPanel.add(UiUtils.enFlow(new JLabel("Gender"), dogGenderMaleRB, dogGenderFemaleRB));
         centerInnerPanel.add(UiUtils.enFlow(dogSterilizedCB));
         centerInnerPanel.add(UiUtils.enFlow(dogObedienceCB, dogAgilityCB, dogDwdCB));
-        Map<Integer, ObedienceClass> m2 = new TreeMap<Integer, ObedienceClass>();
+        Map<Integer, ObedienceClass> m2 = new TreeMap<>();
         for (ObedienceClass obedienceClass : owner.getDatabase().getObedienceClasses()) {
             m2.put(obedienceClass.getListSequenceId(), obedienceClass);
         }
@@ -178,18 +176,18 @@ public class DogDialog extends JDialog implements IOwner {
     }
 
     private void initBreeds() {
-        Map<String, Breed> m = new TreeMap<String, Breed>();
+        Map<String, Breed> m = new TreeMap<>();
         for (Breed breed : owner.getDatabase().getBreeds()) {
             m.put(breed.getBreed(), breed);
         }
         breedListModel.removeAllElements();
         for (Breed breed : m.values()) {
-            if (!nyoo || breed.isActive()) {
-                BreedWrapper w = new BreedWrapper(breed);
+            BreedWrapper w = new BreedWrapper(breed);
+            if (breed.isActive() || dog.getBreedId() == breed.getBreedId()) {
                 breedListModel.addElement(w);
-                if (dog.getBreedId() == breed.getBreedId()) {
-                    breedListModel.setSelectedItem(w);
-                }
+            }
+            if (dog.getBreedId() == breed.getBreedId()) {
+                breedListModel.setSelectedItem(w);
             }
         }
     }

@@ -53,7 +53,7 @@ public class ObedienceClassDialog extends JDialog {
 
         JPanel center = new JPanel(new GridLayout(0, 1));
         getContentPane().add(UiUtils.enFlow(center));
-        java.util.List<JComponent> labels = new ArrayList<JComponent>();
+        java.util.List<JComponent> labels = new ArrayList<>();
         for (ClassTuple tuple : tuples.values()) {
             JLabel label = new JLabel(tuple.getObedienceClass().getObedienceClass());
             center.add(UiUtils.enFlow(label, tuple.getSpinner()));

@@ -1117,24 +1117,6 @@ public class UI extends JFrame implements IOwner {
         cell.setCellValue(clazz);
     }
 
-    private boolean dogsExist(int membershipId) {
-        for (Dog dog : database.getDogs()) {
-            if (dog.getMembershipId() == membershipId) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean handlersExist(int membershipId) {
-        for (Handler handler : database.getHandlers()) {
-            if (handler.getMembershipId() == membershipId) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void WriteArchiveDatabase(String archiveLocation) {
         PrintWriter pw;
         try {

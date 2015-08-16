@@ -1,7 +1,6 @@
 package org.nstodc.ui.configuration;
 
 import org.nstodc.database.type.Breed;
-import org.nstodc.database.type.Suburb;
 import org.nstodc.ui.UiUtils;
 
 import javax.swing.*;
