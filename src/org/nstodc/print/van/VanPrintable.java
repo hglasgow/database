@@ -65,8 +65,7 @@ public class VanPrintable implements Printable {
         for (VanDetailEntry printLine : block.getPrintLines().values()) {
             y += lineHeight;
             graphics.drawString(" " +
-                    printLine.getLastName() + ", " +
-                    printLine.getFirstName() + " " +
+                    printLine.getName() + " - " +
                     printLine.getAddress() + " " +
                     printLine.getSuburb() + " " +
                     printLine.getPostcode(), 0, y);

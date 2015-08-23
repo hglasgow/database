@@ -728,34 +728,69 @@ public class UI extends JFrame implements IOwner {
         Calendar cal = Calendar.getInstance();
         int currentYear = cal.get(Calendar.YEAR);
         VanBean vb = new VanBean();
-        for (Handler handler : database.getHandlers()) {
-            for (Membership membership : database.getMemberships()) {
-                if (membership.getMembershipId() == handler.getMembershipId()) {
-                    boolean financialDog = false;
-                    for (Dog dog : database.getDogs()) {
-                        if (dog.getMembershipId() == membership.getMembershipId() &&
-                                dog.getMembershipYear() >= currentYear) {
-                            financialDog = true;
-                            break;
-                        }
-                    }
-                    if (financialDog) {
-                        String suburb = "";
-                        String postcode = "";
-                        for (Suburb s : database.getSuburbs()) {
-                            if (membership.getSuburbId() == s.getSuburbId()) {
-                                suburb = s.getSuburb();
-                                postcode = s.getPostcode();
-                                break;
-                            }
-                        }
-                        VanDetailEntry vbe = new VanDetailEntry(handler.getLastName(), handler.getFirstName(), membership.getAddress(), suburb, postcode);
-                        vb.getEntries().put((vbe.getLastName() + vbe.getFirstName() + String.valueOf(Math.random())).toUpperCase(), vbe);
+        for (Membership membership : database.getMemberships()) {
+            boolean financialDog = false;
+            for (Dog dog : database.getDogs()) {
+                if (dog.getMembershipId() == membership.getMembershipId() &&
+                        dog.getMembershipYear() >= currentYear) {
+                    financialDog = true;
+                    break;
+                }
+            }
+            if (financialDog) {
+                String suburb = "";
+                String postcode = "";
+                for (Suburb s : database.getSuburbs()) {
+                    if (membership.getSuburbId() == s.getSuburbId()) {
+                        suburb = s.getSuburb();
+                        postcode = s.getPostcode();
+                        break;
                     }
                 }
+                Set<String> handlers = createSurnameUniqueSet(membership.getMembershipId());
+                for (String entry : handlers) {
+                    VanDetailEntry vbe = new VanDetailEntry(entry, membership.getAddress(), suburb, postcode);
+                    vb.getEntries().put((entry + String.valueOf(Math.random())).toUpperCase(), vbe);
+                }
+
             }
         }
         return vb;
+    }
+
+    // Convert lots of family members into one, like "Smith: Bob, Jim and Sheila".
+    private Set<String> createSurnameUniqueSet(int membershipId) {
+        Map<String, Set<String>> membersBySurname = new HashMap<>(); // <"Smith", <"Bob, Jim, Sheila">>
+        for (Handler handler : database.getHandlers()) {
+            if (handler.getMembershipId() == membershipId) {
+                Set<String> firstNames;
+                if (membersBySurname.containsKey(handler.getLastName())) {
+                    firstNames = membersBySurname.get(handler.getLastName());
+                } else {
+                    firstNames = new HashSet<>();
+                    membersBySurname.put(handler.getLastName(), firstNames);
+                }
+                firstNames.add(handler.getFirstName());
+            }
+        }
+        Set<String> uniqueNames = new HashSet<>(); // <"Smith: Bob, Jim and Sheila">
+        for (Map.Entry<String, Set<String>> entry : membersBySurname.entrySet()) {
+            String last = entry.getKey();
+            int index = 0;
+            StringBuilder first = new StringBuilder();
+            for (String firstName : entry.getValue()) {
+                if (index == 0) {
+                    first.append(firstName);
+                } else if (index == entry.getValue().size() - 1) {
+                    first.append(" and " + firstName);
+                } else {
+                    first.append(", " + firstName);
+                }
+                index++;
+            }
+            uniqueNames.add(last + ": " + first.toString());
+        }
+        return uniqueNames;
     }
 
     private void newMembersByMonth() {
