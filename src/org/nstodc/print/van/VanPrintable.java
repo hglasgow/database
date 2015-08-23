@@ -1,5 +1,7 @@
 package org.nstodc.print.van;
 
+import org.nstodc.ui.UiUtils;
+
 import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -53,7 +55,7 @@ public class VanPrintable implements Printable {
 
         // Title line
         y += lineHeight;
-        graphics.drawString(" V A N   R E P O R T", 0, y);
+        graphics.drawString(" V A N   R E P O R T (" + UiUtils.nextSunday() + ")", 0, y);
 
         // Blank line
         y += lineHeight;
