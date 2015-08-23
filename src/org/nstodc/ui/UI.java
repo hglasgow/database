@@ -767,7 +767,7 @@ public class UI extends JFrame implements IOwner {
                 if (membersBySurname.containsKey(handler.getLastName())) {
                     firstNames = membersBySurname.get(handler.getLastName());
                 } else {
-                    firstNames = new HashSet<>();
+                    firstNames = new TreeSet<>();
                     membersBySurname.put(handler.getLastName(), firstNames);
                 }
                 firstNames.add(handler.getFirstName());
