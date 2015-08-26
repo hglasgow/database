@@ -302,71 +302,6 @@ public class UI extends JFrame implements IOwner {
             }
         });
 
-        ///////////////////
-        // Configuration //
-        ///////////////////
-        JMenu configurationMenu = new JMenu("Configuration");
-        menuBar.add(configurationMenu);
-        configurationMenu.setMnemonic(KeyEvent.VK_C);
-        if (loadedDatabaseSuccessfully.get()) {
-            // Payment Amount
-            JMenuItem paymentAmountMenuItem = new JMenuItem("Payment Amount...");
-            configurationMenu.add(paymentAmountMenuItem);
-            paymentAmountMenuItem.setMnemonic(KeyEvent.VK_P);
-            paymentAmountMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    PaymentAmountDialog d = new PaymentAmountDialog(UI.this);
-                    d.setVisible(true);
-                }
-            });
-
-            // Breeds
-            JMenuItem breedsMenuItem = new JMenuItem("Dog Breeds...");
-            configurationMenu.add(breedsMenuItem);
-            breedsMenuItem.setMnemonic(KeyEvent.VK_D);
-            breedsMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    BreedsDialog d = new BreedsDialog(UI.this);
-                    d.setVisible(true);
-                }
-            });
-
-            // Suburbs
-            JMenuItem suburbsMenuItem = new JMenuItem("Suburbs...");
-            configurationMenu.add(suburbsMenuItem);
-            suburbsMenuItem.setMnemonic(KeyEvent.VK_S);
-            suburbsMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    SuburbsDialog d = new SuburbsDialog(UI.this);
-                    d.setVisible(true);
-                }
-            });
-
-            configurationMenu.addSeparator();
-        }
-
-        // Database
-        JMenuItem databaseMenuItem = new JMenuItem("Database Location...");
-        configurationMenu.add(databaseMenuItem);
-        databaseMenuItem.setMnemonic(KeyEvent.VK_D);
-        databaseMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                selectDatabase();
-            }
-        });
-
-        if (loadedDatabaseSuccessfully.get()) {
-            // Archive
-            JMenuItem archiveLocationMenuItem = new JMenuItem("Archive Location...");
-            configurationMenu.add(archiveLocationMenuItem);
-            archiveLocationMenuItem.setMnemonic(KeyEvent.VK_A);
-            archiveLocationMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    archiveLocation();
-                }
-            });
-        }
-
         /////////////
         // Reports //
         /////////////
@@ -436,6 +371,72 @@ public class UI extends JFrame implements IOwner {
                 }
             });
         }
+
+        ///////////////////
+        // Configuration //
+        ///////////////////
+        JMenu configurationMenu = new JMenu("Configuration");
+        menuBar.add(configurationMenu);
+        configurationMenu.setMnemonic(KeyEvent.VK_C);
+        if (loadedDatabaseSuccessfully.get()) {
+            // Payment Amount
+            JMenuItem paymentAmountMenuItem = new JMenuItem("Payment Amount...");
+            configurationMenu.add(paymentAmountMenuItem);
+            paymentAmountMenuItem.setMnemonic(KeyEvent.VK_P);
+            paymentAmountMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    PaymentAmountDialog d = new PaymentAmountDialog(UI.this);
+                    d.setVisible(true);
+                }
+            });
+
+            // Breeds
+            JMenuItem breedsMenuItem = new JMenuItem("Dog Breeds...");
+            configurationMenu.add(breedsMenuItem);
+            breedsMenuItem.setMnemonic(KeyEvent.VK_D);
+            breedsMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    BreedsDialog d = new BreedsDialog(UI.this);
+                    d.setVisible(true);
+                }
+            });
+
+            // Suburbs
+            JMenuItem suburbsMenuItem = new JMenuItem("Suburbs...");
+            configurationMenu.add(suburbsMenuItem);
+            suburbsMenuItem.setMnemonic(KeyEvent.VK_S);
+            suburbsMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    SuburbsDialog d = new SuburbsDialog(UI.this);
+                    d.setVisible(true);
+                }
+            });
+
+            configurationMenu.addSeparator();
+        }
+
+        // Database
+        JMenuItem databaseMenuItem = new JMenuItem("Database Location...");
+        configurationMenu.add(databaseMenuItem);
+        databaseMenuItem.setMnemonic(KeyEvent.VK_D);
+        databaseMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                selectDatabase();
+            }
+        });
+
+        if (loadedDatabaseSuccessfully.get()) {
+            // Archive
+            JMenuItem archiveLocationMenuItem = new JMenuItem("Archive Location...");
+            configurationMenu.add(archiveLocationMenuItem);
+            archiveLocationMenuItem.setMnemonic(KeyEvent.VK_A);
+            archiveLocationMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    archiveLocation();
+                }
+            });
+        }
+
     }
 
     private void statsReport() {
