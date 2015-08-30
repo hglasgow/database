@@ -8,7 +8,6 @@ import org.nstodc.database.type.Payment;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Utility bundle for managing memberships.
@@ -22,9 +21,9 @@ public class MembershipBundle {
 
     public MembershipBundle(Membership membership) {
         this.membership = membership;
-        this.handlers = new HashSet<Handler>();
-        this.dogs = new HashSet<Dog>();
-        this.payments = new HashSet<Payment>();
+        this.handlers = new HashSet<>();
+        this.dogs = new HashSet<>();
+        this.payments = new HashSet<>();
     }
 
     public MembershipBundle(Membership membership, Set<Handler> handlers, Set<Dog> dogs, Set<Payment> payments) {

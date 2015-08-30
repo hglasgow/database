@@ -15,7 +15,7 @@ import java.util.TreeMap;
 public class VanPrintable implements Printable {
 
     private final VanBean vanBean;
-    private final Map<Integer, Block> blocks = new TreeMap<Integer, Block>();
+    private final Map<Integer, Block> blocks = new TreeMap<>();
     private final Font plain = new Font("Serif", Font.PLAIN, 10);
     private final Font bold = new Font("Serif", Font.BOLD, 10);
     public VanPrintable(VanBean vanBean) {
@@ -28,7 +28,6 @@ public class VanPrintable implements Printable {
         FontMetrics metrics = graphics.getFontMetrics(plain);
         int lineHeight = metrics.getHeight();
         int linesPerPage = (int) (pageFormat.getImageableHeight() / lineHeight);
-        int pageWidth = (int) pageFormat.getImageableWidth();
         if (blocks.size() == 0) {
             initializeBlocks(linesPerPage - 2); // Keep 2 spare for title and blank line.
         }
@@ -42,13 +41,13 @@ public class VanPrintable implements Printable {
         Graphics2D g2d = (Graphics2D) graphics;
         g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
-        printBlock(pageIndex, lineHeight, graphics, pageWidth, metrics);
+        printBlock(pageIndex, lineHeight, graphics);
 
         // Tell the caller that this page is part of the printed document.
         return PAGE_EXISTS;
     }
 
-    private void printBlock(int blockIndex, int lineHeight, Graphics graphics, int pageWidth, FontMetrics metrics) {
+    private void printBlock(int blockIndex, int lineHeight, Graphics graphics) {
         graphics.setFont(bold);
         Block block = blocks.get(blockIndex);
         int y = 0;
@@ -88,7 +87,7 @@ public class VanPrintable implements Printable {
     }
 
     private class Block {
-        private final Map<Integer, VanDetailEntry> printLines = new TreeMap<Integer, VanDetailEntry>();
+        private final Map<Integer, VanDetailEntry> printLines = new TreeMap<>();
         public Map<Integer, VanDetailEntry> getPrintLines() {
             return printLines;
         }

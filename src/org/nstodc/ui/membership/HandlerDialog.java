@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Add / edit a handler.
@@ -70,16 +69,12 @@ public class HandlerDialog extends JDialog {
                         handler.setLastName(lastNameTF.getText().trim());
                         handler.setCrn(crnTF.getText().trim());
                         handler.setPrimary(primaryCB.isSelected());
-                        if (nyoo) {
-                            saveNew();
-                            SwingUtilities.invokeLater(new Runnable() {
-                                public void run() {
-                                    owner.addHandler();
-                                }
-                            });
-                        } else {
-                            saveExisting();
-                        }
+                        saveNew();
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                owner.addHandler();
+                            }
+                        });
                         dispose();
                     }
                 }

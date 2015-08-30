@@ -2,7 +2,6 @@ package org.nstodc.ui.reports;
 
 import org.nstodc.database.Database;
 import org.nstodc.database.type.Dog;
-import org.nstodc.database.type.Handler;
 import org.nstodc.database.type.Membership;
 import org.nstodc.ui.UI;
 import org.nstodc.ui.UiUtils;
@@ -15,8 +14,8 @@ import java.awt.event.ActionListener;
 public class MembershipCountReportDialog extends JDialog {
 
     private UI owner;
-    private DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-    private JComboBox<String> combo = new JComboBox<String>(model);
+    private DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+    private JComboBox<String> combo = new JComboBox<>(model);
     private JLabel results = new JLabel("Results:");
 
     public MembershipCountReportDialog(UI owner) {
@@ -65,22 +64,21 @@ public class MembershipCountReportDialog extends JDialog {
             String type = (String) combo.getSelectedItem();
             Database database = owner.getDatabase();
             for (Membership membership : database.getMemberships()) {
-                dogs:
                 for (Dog dog : database.getDogs()) {
                     if (membership.getMembershipId() == dog.getMembershipId()) {
                         if (dog.getMembershipYear() >= UiUtils.defaultYear()) {
                             if (type.equals("Any")) {
                                 count++;
-                                break dogs;
+                                break;
                             } else if (type.equals("Obedience") && dog.isDoesObedience()) {
                                 count++;
-                                break dogs;
+                                break;
                             } else if (type.equals("Agility") && dog.isDoesAgility()) {
                                 count++;
-                                break dogs;
+                                break;
                             } else if (type.equals("DWD") && dog.isDoesDwd()) {
                                 count++;
-                                break dogs;
+                                break;
                             }
                         }
                     }

@@ -22,7 +22,6 @@ public class NewMembersByMonthDialog extends JDialog {
     private UI owner;
 
     private JRadioButton thisYearRB = new JRadioButton("This Year");
-    private JRadioButton lastYearRB = new JRadioButton("Last Year");
 
     private JLabel janL = new JLabel("Jan:");
     private JLabel febL = new JLabel("Feb:");
@@ -47,6 +46,7 @@ public class NewMembersByMonthDialog extends JDialog {
 
         ButtonGroup bg = new ButtonGroup();
         bg.add(thisYearRB);
+        JRadioButton lastYearRB = new JRadioButton("Last Year");
         bg.add(lastYearRB);
         thisYearRB.setSelected(true);
         thisYearRB.addActionListener(new ActionListener() {

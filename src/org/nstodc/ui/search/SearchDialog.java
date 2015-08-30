@@ -5,6 +5,7 @@ import org.nstodc.database.type.Handler;
 import org.nstodc.database.type.Membership;
 import org.nstodc.database.type.ObedienceClass;
 import org.nstodc.ui.Constants;
+import org.nstodc.ui.Tabs;
 import org.nstodc.ui.UI;
 import org.nstodc.ui.UiUtils;
 
@@ -32,7 +33,7 @@ public class SearchDialog extends JDialog {
     private JTextField dogsNameTF = new JTextField(10);
     private JButton advanceButton = new JButton("Advance");
     private JButton editButton = new JButton("Edit");
-    private boolean lastSearchByDog;
+    private Tabs lastSearchBy;
 
     private final DefaultListModel<Result> resultsListModel = new DefaultListModel<>();
     JList<Result> resultsList = new JList<>(resultsListModel);
@@ -219,9 +220,15 @@ public class SearchDialog extends JDialog {
                                 @Override
                                 public void run() {
                                     resultsList.ensureIndexIsVisible(resultsListModel.size() - 1);
-                                    if (lastSearchByDog) {
+                                    if (lastSearchBy == Tabs.Dog) {
                                         dogsNameTF.requestFocus();
                                         dogsNameTF.selectAll();
+                                    } else if (lastSearchBy == Tabs.FirstName) {
+                                        firstNameTF.requestFocus();
+                                        firstNameTF.selectAll();
+                                    } else if (lastSearchBy == Tabs.LastName) {
+                                        lastNameTF.requestFocus();
+                                        lastNameTF.selectAll();
                                     } else {
                                         membershipIdTF.requestFocus();
                                         membershipIdTF.selectAll();
@@ -257,10 +264,19 @@ public class SearchDialog extends JDialog {
         if (resultsList.getSelectedIndex() >= 0) {
             dispose();
             final Result r = resultsList.getSelectedValue();
+
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    owner.editMembership(r.getMembershipId());
+                    Tabs tab = Tabs.Membership;
+                    if (lastSearchBy == Tabs.Dog) {
+                        tab = Tabs.Dog;
+                    } else if (lastSearchBy == Tabs.FirstName) {
+                        tab = Tabs.FirstName;
+                    } else if (lastSearchBy == Tabs.LastName) {
+                        tab = Tabs.LastName;
+                    }
+                    owner.editMembership(r.getMembershipId(), tab);
                 }
             });
         }
@@ -369,16 +385,18 @@ public class SearchDialog extends JDialog {
         }
 
         Set<Result> results = new TreeSet<>();
-        lastSearchByDog = false;
+        lastSearchBy = Tabs.Membership;
 
         if (membershipId >= 0) {
             sortMembershipId(results, membershipId);
         } else if (firstName.length() > 0) {
+            lastSearchBy = Tabs.FirstName;
             sortFirstName(results, firstName);
         } else if (lastName.length() > 0) {
+            lastSearchBy = Tabs.LastName;
             sortLastName(results, lastName);
         } else if (dogsName.length() > 0) {
-            lastSearchByDog = true;
+            lastSearchBy = Tabs.Dog;
             sortDogsName(results, dogsName);
         }
 

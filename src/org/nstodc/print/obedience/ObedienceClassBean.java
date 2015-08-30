@@ -10,7 +10,7 @@ public class ObedienceClassBean implements Comparable<ObedienceClassBean> {
 
     private final int classIndex;
     private final String className;
-    private final Map<Integer, ObedienceClassEntryBean> entries = new TreeMap<Integer, ObedienceClassEntryBean>();
+    private final Map<Integer, ObedienceClassEntryBean> entries = new TreeMap<>();
 
     public ObedienceClassBean(int classIndex, String className) {
         this.classIndex = classIndex;

@@ -47,7 +47,6 @@ public class MembershipType {
 
     @Override
     public int hashCode() {
-        int result = membershipTypeId;
-        return result;
+        return membershipTypeId;
     }
 }

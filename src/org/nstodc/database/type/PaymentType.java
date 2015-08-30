@@ -57,7 +57,6 @@ public class PaymentType {
 
     @Override
     public int hashCode() {
-        int result = paymentTypeId;
-        return result;
+        return paymentTypeId;
     }
 }

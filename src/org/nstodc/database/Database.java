@@ -10,15 +10,15 @@ import java.util.*;
 public class Database {
 
     private int defaultMembershipAmount;
-    private Set<Breed> breeds = new HashSet<Breed>();
-    private Set<Dog> dogs = new HashSet<Dog>();
-    private Set<Handler> handlers = new HashSet<Handler>();
-    private Set<Membership> memberships = new HashSet<Membership>();
-    private Set<MembershipType> membershipTypes = new HashSet<MembershipType>();
-    private Set<Payment> payments = new HashSet<Payment>();
-    private Set<PaymentType> paymentTypes = new HashSet<PaymentType>();
-    private Set<Suburb> suburbs = new HashSet<Suburb>();
-    private Set<ObedienceClass> obedienceClasses = new HashSet<ObedienceClass>();
+    private Set<Breed> breeds = new HashSet<>();
+    private Set<Dog> dogs = new HashSet<>();
+    private Set<Handler> handlers = new HashSet<>();
+    private Set<Membership> memberships = new HashSet<>();
+    private Set<MembershipType> membershipTypes = new HashSet<>();
+    private Set<Payment> payments = new HashSet<>();
+    private Set<PaymentType> paymentTypes = new HashSet<>();
+    private Set<Suburb> suburbs = new HashSet<>();
+    private Set<ObedienceClass> obedienceClasses = new HashSet<>();
     private int defaultMembershipAmountFromJuly;
     private int defaultMembershipAmountFromAugust;
     private int defaultMembershipAmountFromSeptember;
@@ -127,7 +127,7 @@ public class Database {
 
     public Set<MembershipType> getMembershipTypes() {
         if (membershipTypes == null) {
-            membershipTypes = new HashSet<MembershipType>();
+            membershipTypes = new HashSet<>();
         }
         if (membershipTypes.isEmpty()) {
             MembershipType ordinary = new MembershipType(0);
@@ -184,7 +184,7 @@ public class Database {
 
     public Set<PaymentType> getPaymentTypes() {
         if (paymentTypes == null) {
-            paymentTypes = new HashSet<PaymentType>();
+            paymentTypes = new HashSet<>();
         }
 
         if (payments.isEmpty()) {
@@ -216,7 +216,7 @@ public class Database {
 
     public Set<ObedienceClass> getObedienceClasses() {
         if (obedienceClasses == null) {
-            obedienceClasses = new HashSet<ObedienceClass>();
+            obedienceClasses = new HashSet<>();
         }
         if (obedienceClasses.isEmpty()) {
             ObedienceClass puppy = new ObedienceClass(0);

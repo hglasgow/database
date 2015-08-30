@@ -57,7 +57,6 @@ public class Suburb {
 
     @Override
     public int hashCode() {
-        int result = suburbId;
-        return result;
+        return suburbId;
     }
 }

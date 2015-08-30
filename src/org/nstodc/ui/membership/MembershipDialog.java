@@ -4,6 +4,7 @@ import org.nstodc.database.Database;
 import org.nstodc.database.ValidationException;
 import org.nstodc.database.type.*;
 import org.nstodc.ui.IOwner;
+import org.nstodc.ui.Tabs;
 import org.nstodc.ui.UI;
 import org.nstodc.ui.UiUtils;
 import org.nstodc.ui.configuration.SuburbsDialog;
@@ -32,19 +33,18 @@ public class MembershipDialog extends JDialog implements IOwner {
     private final JTextField phoneTF;
     private final JTextField mobileTF;
     private final JTextField emailTF;
-    private final DefaultComboBoxModel<SuburbWrapper> suburbModel = new DefaultComboBoxModel<SuburbWrapper>();
+    private final DefaultComboBoxModel<SuburbWrapper> suburbModel = new DefaultComboBoxModel<>();
     private final JCheckBox sponsorshipCB;
-    private final DefaultComboBoxModel<MembershipTypeWrapper> membershipTypeModel = new DefaultComboBoxModel<MembershipTypeWrapper>();
-    private final DefaultListModel<HandlerWrapper> handlersListModel = new DefaultListModel<HandlerWrapper>();
+    private final DefaultComboBoxModel<MembershipTypeWrapper> membershipTypeModel = new DefaultComboBoxModel<>();
+    private final DefaultListModel<HandlerWrapper> handlersListModel = new DefaultListModel<>();
     private final JList<HandlerWrapper> handlersList;
     private final Membership membership;
-    private final DefaultListModel<DogWrapper> dogsListModel = new DefaultListModel<DogWrapper>();
+    private final DefaultListModel<DogWrapper> dogsListModel = new DefaultListModel<>();
     private final JList<DogWrapper> dogsList;
-    private final DefaultListModel<PaymentWrapper> paymentsListModel = new DefaultListModel<PaymentWrapper>();
+    private final DefaultListModel<PaymentWrapper> paymentsListModel = new DefaultListModel<>();
     private final JList<PaymentWrapper> paymentsList;
-    private String phone;
 
-    public MembershipDialog(final UI owner, final boolean nyoo, final MembershipBundle bundle) {
+    public MembershipDialog(final UI owner, final boolean nyoo, final MembershipBundle bundle, Tabs tab) {
         super(owner, (nyoo ? "Add" : "Update") + " Membership " + bundle.getMembership().getMembershipId() + " (" + bundle.getMembership().getDateJoined() + ")", true);
         this.nyoo = nyoo;
         this.owner = owner;
@@ -65,7 +65,7 @@ public class MembershipDialog extends JDialog implements IOwner {
         tabs.addTab("Membership", membershipOuterPanel);
 
         JLabel l = new JLabel("Membership type");
-        Map<Integer, MembershipType> m1 = new TreeMap<Integer, MembershipType>();
+        Map<Integer, MembershipType> m1 = new TreeMap<>();
         for (MembershipType mt : owner.getDatabase().getMembershipTypes()) {
             m1.put(mt.getMembershipTypeId(), mt);
         }
@@ -76,7 +76,7 @@ public class MembershipDialog extends JDialog implements IOwner {
                 membershipTypeModel.setSelectedItem(w);
             }
         }
-        JComboBox<MembershipTypeWrapper> membershipTypeCB = new JComboBox<MembershipTypeWrapper>(membershipTypeModel);
+        JComboBox<MembershipTypeWrapper> membershipTypeCB = new JComboBox<>(membershipTypeModel);
         membershipInnerPanel.add(UiUtils.enFlow(l, membershipTypeCB));
 
         JLabel addressLabel = new JLabel("Address");
@@ -84,7 +84,7 @@ public class MembershipDialog extends JDialog implements IOwner {
         addressTF.setText(membership.getAddress());
 
         JLabel suburbLabel = new JLabel("Suburb");
-        JComboBox<SuburbWrapper> suburbCB = new JComboBox<SuburbWrapper>(suburbModel);
+        JComboBox<SuburbWrapper> suburbCB = new JComboBox<>(suburbModel);
         JButton addSuburbBtn = new JButton("Add");
         addSuburbBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -150,7 +150,7 @@ public class MembershipDialog extends JDialog implements IOwner {
         JScrollPane handlersScrollPane = new JScrollPane();
         handlersScrollPane.setPreferredSize(new Dimension(250, 80));
         handlersInnerPanel.add(UiUtils.enFlow(handlersScrollPane), BorderLayout.CENTER);
-        handlersList = new JList<HandlerWrapper>(handlersListModel);
+        handlersList = new JList<>(handlersListModel);
         handlersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         handlersList.addMouseListener(new MouseAdapter() {
             @Override
@@ -225,7 +225,7 @@ public class MembershipDialog extends JDialog implements IOwner {
         JScrollPane dogsScrollPane = new JScrollPane();
         dogsScrollPane.setPreferredSize(new Dimension(250, 80));
         dogsInnerPanel.add(UiUtils.enFlow(dogsScrollPane), BorderLayout.CENTER);
-        dogsList = new JList<DogWrapper>(dogsListModel);
+        dogsList = new JList<>(dogsListModel);
         dogsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         dogsList.addMouseListener(new MouseAdapter() {
             @Override
@@ -315,7 +315,7 @@ public class MembershipDialog extends JDialog implements IOwner {
         JScrollPane paymentsScrollPane = new JScrollPane();
         paymentsScrollPane.setPreferredSize(new Dimension(250, 80));
         paymentsInnerPanel.add(UiUtils.enFlow(paymentsScrollPane), BorderLayout.CENTER);
-        paymentsList = new JList<PaymentWrapper>(paymentsListModel);
+        paymentsList = new JList<>(paymentsListModel);
         paymentsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         paymentsList.addMouseListener(new MouseAdapter() {
             @Override
@@ -399,10 +399,15 @@ public class MembershipDialog extends JDialog implements IOwner {
         pack();
         setResizable(false);
 
+        if (tab == Tabs.Dog) {
+            tabs.setSelectedIndex(2);
+        } else if (tab == Tabs.FirstName || tab == Tabs.LastName) {
+            tabs.setSelectedIndex(1);
+        }
     }
 
     private void initSuburbs() {
-        Map<String, Suburb> m2 = new TreeMap<String, Suburb>();
+        Map<String, Suburb> m2 = new TreeMap<>();
         for (Suburb suburb : owner.getDatabase().getSuburbs()) {
             if (suburb.getPostcode().equals("0000")) {
                 // Unknown first.
@@ -579,7 +584,7 @@ public class MembershipDialog extends JDialog implements IOwner {
         if (index >= 0) {
             Dog dog = dogsListModel.getElementAt(index).dog;
 
-            Map<Integer, ObedienceClass> m = new TreeMap<Integer, ObedienceClass>();
+            Map<Integer, ObedienceClass> m = new TreeMap<>();
             ObedienceClass currentClass = null;
             for (ObedienceClass obedienceClass : getDatabase().getObedienceClasses()) {
                 m.put(obedienceClass.getListSequenceId(), obedienceClass);

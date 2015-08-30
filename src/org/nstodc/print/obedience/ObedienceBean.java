@@ -9,7 +9,7 @@ import java.util.TreeSet;
 public class ObedienceBean {
 
     private final String date;
-    private final Set<ObedienceClassBean> classes = new TreeSet<ObedienceClassBean>();
+    private final Set<ObedienceClassBean> classes = new TreeSet<>();
 
     public ObedienceBean(String date) {
         this.date = date;

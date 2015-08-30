@@ -251,7 +251,7 @@ public class UI extends JFrame implements IOwner {
             latestMenuItem.setEnabled(false);
             latestMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    editMembership(latestMembership);
+                    editMembership(latestMembership, Tabs.Membership);
                 }
             });
 
@@ -783,9 +783,9 @@ public class UI extends JFrame implements IOwner {
                 if (index == 0) {
                     first.append(firstName);
                 } else if (index == entry.getValue().size() - 1) {
-                    first.append(" and " + firstName);
+                    first.append(" and ").append(firstName);
                 } else {
-                    first.append(", " + firstName);
+                    first.append(", ").append(firstName);
                 }
                 index++;
             }
@@ -806,7 +806,7 @@ public class UI extends JFrame implements IOwner {
         Membership membership = new Membership(membershipId, UiUtils.today());
 
         MembershipBundle bundle = new MembershipBundle(membership);
-        MembershipDialog d = new MembershipDialog(this, true, bundle);
+        MembershipDialog d = new MembershipDialog(this, true, bundle, Tabs.Membership);
         setCursor(c);
         d.setVisible(true);
     }
@@ -1214,7 +1214,7 @@ public class UI extends JFrame implements IOwner {
         return database;
     }
 
-    public void editMembership(int membershipId) {
+    public void editMembership(int membershipId, Tabs tab) {
         for (Membership membership : database.getMemberships()) {
             if (membership.getMembershipId() == membershipId) {
                 Set<Handler> handlers = new HashSet<>();
@@ -1236,7 +1236,7 @@ public class UI extends JFrame implements IOwner {
                     }
                 }
                 MembershipBundle bundle = new MembershipBundle(membership, handlers, dogs, payments);
-                MembershipDialog d = new MembershipDialog(this, false, bundle);
+                MembershipDialog d = new MembershipDialog(this, false, bundle, tab);
                 d.setVisible(true);
                 break;
             }

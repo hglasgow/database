@@ -8,7 +8,7 @@ import java.util.TreeMap;
  */
 public class VanBean {
 
-    private final Map<String, VanDetailEntry> entries = new TreeMap<String,VanDetailEntry>();
+    private final Map<String, VanDetailEntry> entries = new TreeMap<>();
 
     public Map<String, VanDetailEntry> getEntries() {
         return entries;

@@ -19,8 +19,8 @@ public class PaymentDialog extends JDialog {
     private final MembershipDialog owner;
     private final Payment payment;
 
-    private final DefaultComboBoxModel<PaymentTypeWrapper> paymentTypeModel = new DefaultComboBoxModel<PaymentTypeWrapper>();
-    private final JComboBox<PaymentTypeWrapper> paymentTypeCombo = new JComboBox<PaymentTypeWrapper>(paymentTypeModel);
+    private final DefaultComboBoxModel<PaymentTypeWrapper> paymentTypeModel = new DefaultComboBoxModel<>();
+    private final JComboBox<PaymentTypeWrapper> paymentTypeCombo = new JComboBox<>(paymentTypeModel);
     private final JTextField dateTF = new JTextField(10);
     private final JTextField yearTF = new JTextField(10);
     private final JTextField amountTF = new JTextField(10);
@@ -43,7 +43,7 @@ public class PaymentDialog extends JDialog {
         centerOuterPanel.add(centerInnerPanel);
         getContentPane().add(centerOuterPanel, BorderLayout.CENTER);
 
-        Map<Integer, PaymentType> m2 = new TreeMap<Integer, PaymentType>();
+        Map<Integer, PaymentType> m2 = new TreeMap<>();
         for (PaymentType paymentType: owner.getDatabase().getPaymentTypes()) {
             m2.put(paymentType.getPaymentTypeSequenceId(), paymentType);
         }

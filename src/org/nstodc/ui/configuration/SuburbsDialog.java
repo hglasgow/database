@@ -26,8 +26,8 @@ import java.util.prefs.Preferences;
 public class SuburbsDialog extends JDialog {
 
     private final IOwner owner;
-    private final DefaultListModel<SuburbWrapper> suburbsListModel = new DefaultListModel<SuburbWrapper>();
-    private final JList<SuburbWrapper> suburbsList = new JList<SuburbWrapper>(suburbsListModel);
+    private final DefaultListModel<SuburbWrapper> suburbsListModel = new DefaultListModel<>();
+    private final JList<SuburbWrapper> suburbsList = new JList<>(suburbsListModel);
     private final JButton editButton = new JButton("Edit");
 
     public SuburbsDialog(UI owner) {
@@ -68,7 +68,7 @@ public class SuburbsDialog extends JDialog {
         suburbsScrollPane.setViewportView(suburbsList);
         getContentPane().add(UiUtils.enFlow(suburbsScrollPane), BorderLayout.CENTER);
 
-        Map<String, Suburb> map = new TreeMap<String, Suburb>();
+        Map<String, Suburb> map = new TreeMap<>();
         for (Suburb suburb : owner.getDatabase().getSuburbs()) {
             map.put(suburb.getSuburb(), suburb);
         }
@@ -176,10 +176,6 @@ public class SuburbsDialog extends JDialog {
 
         private SuburbWrapper(Suburb suburb) {
             this.suburb = suburb;
-        }
-
-        public Suburb getSuburbd() {
-            return suburb;
         }
 
         @Override

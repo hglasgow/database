@@ -57,7 +57,6 @@ public class ObedienceClass {
 
     @Override
     public int hashCode() {
-        int result = obedienceClassId;
-        return result;
+        return obedienceClassId;
     }
 }
