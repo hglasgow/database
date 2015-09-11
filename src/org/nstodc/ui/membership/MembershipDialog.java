@@ -669,7 +669,7 @@ public class MembershipDialog extends JDialog implements IOwner {
         if (month == Calendar.OCTOBER) {
             p.setAmount(getDatabase().getDefaultMembershipAmountFromOctober());
         } else if (month == Calendar.SEPTEMBER) {
-            p.setAmount(getDatabase().getDefaultMembershipAmountFromAugust());
+            p.setAmount(getDatabase().getDefaultMembershipAmountFromSeptember());
         } else if (month == Calendar.AUGUST) {
             p.setAmount(getDatabase().getDefaultMembershipAmountFromAugust());
         } else if (month == Calendar.JULY) {
