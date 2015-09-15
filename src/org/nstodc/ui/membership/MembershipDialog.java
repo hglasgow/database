@@ -710,6 +710,21 @@ public class MembershipDialog extends JDialog implements IOwner {
             }
         }
 
+        if (phoneText.startsWith("9")) {
+            int count = 0;
+            for (int i = 0; i < phoneText.length(); i++) {
+                if (!phoneText.substring(i, i + 1).equalsIgnoreCase(" ")) {
+                    count++;
+                }
+            }
+            if (count != 8) {
+                int i = JOptionPane.showOptionDialog(this, "Phone appears to be invalid.", "Membership", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[]{"Redo", "Accept"}, 0);
+                if (i == 0) {
+                    return false;
+                }
+            }
+        }
+
         // Mobile blank or numeric.
         String mobileText = mobileTF.getText().trim();
         for (int i = 0; i < mobileText.length(); i++) {
@@ -717,6 +732,21 @@ public class MembershipDialog extends JDialog implements IOwner {
             if (c != ' ' && (c < '0' || c > '9')) {
                 error("Membership", "Mobile invalid " + mobileText + ".");
                 return false;
+            }
+        }
+
+        if (mobileText.startsWith("04")) {
+            int count = 0;
+            for (int i = 0; i < mobileText.length(); i++) {
+                if (!mobileText.substring(i, i + 1).equalsIgnoreCase(" ")) {
+                    count++;
+                }
+            }
+            if (count != 10) {
+                int i = JOptionPane.showOptionDialog(this, "Mobile appears to be invalid.", "Membership", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[]{"Redo", "Accept"}, 0);
+                if (i == 0) {
+                    return false;
+                }
             }
         }
 
