@@ -194,8 +194,12 @@ public class Database {
             paymentTypes.add(cash);
             PaymentType cheque = new PaymentType(1);
             cheque.setPaymentType("Cheque");
-            cheque.setPaymentTypeSequenceId(1);
+            cheque.setPaymentTypeSequenceId(2);
             paymentTypes.add(cheque);
+            PaymentType card = new PaymentType(2);
+            card.setPaymentType("Card");
+            card.setPaymentTypeSequenceId(1);
+            paymentTypes.add(card);
         }
         return Collections.unmodifiableSet(paymentTypes);
     }

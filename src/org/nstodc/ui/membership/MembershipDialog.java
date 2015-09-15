@@ -822,6 +822,12 @@ public class MembershipDialog extends JDialog implements IOwner {
                 handlersListModel.removeElement(w);
             }
         }
+        if (handler.isPrimary()) {
+            for (int i = 0; i < handlersListModel.size(); i++) {
+                HandlerWrapper wrapper = handlersListModel.getElementAt(i);
+                wrapper.handler.setPrimary(false);
+            }
+        }
         handlersListModel.addElement(new HandlerWrapper(handler));
     }
 
