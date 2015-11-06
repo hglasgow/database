@@ -91,17 +91,20 @@ public class ObedienceClassDialog extends JDialog {
         job.setJobName("Obedience Classes");
         boolean ok = job.printDialog();
         if (ok) {
+            Cursor c = getCursor();
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
                 job.print();
             } catch (PrinterException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                setCursor(c);
             }
         }
     }
 
     private ObedienceBean createObedienceBean() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
+        int year = UiUtils.defaultYear();
         Map<Integer, ObedienceClass> map = new TreeMap<>();
         for (ClassTuple tuple : tuples.values()) {
             SpinnerNumberModel m = (SpinnerNumberModel)(tuple.getSpinner().getModel());
