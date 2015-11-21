@@ -274,10 +274,21 @@ public class MembershipDialog extends JDialog implements IOwner {
                 advanceDog();
             }
         });
+
+        final JButton dogRenewBtn = new JButton("Renew");
+        dogRenewBtn.setEnabled(false);
+        dogRenewBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                renewDog();
+            }
+        });
+
         dogButtonsPanel.add(dogAddBtn);
         dogButtonsPanel.add(dogEditBtn);
         dogButtonsPanel.add(dogDeleteBtn);
         dogButtonsPanel.add(dogAdvanceBtn);
+        dogButtonsPanel.add(dogRenewBtn);
         JPanel dogButtonFlowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         dogButtonFlowPanel.add(dogButtonsPanel);
         dogsInnerPanel.add(dogButtonFlowPanel, BorderLayout.EAST);
@@ -294,8 +305,10 @@ public class MembershipDialog extends JDialog implements IOwner {
                 if (selected) {
                     Dog dog = dogsListModel.getElementAt(dogsList.getSelectedIndex()).dog;
                     dogAdvanceBtn.setEnabled(dog.isDoesObedience());
+                    dogRenewBtn.setEnabled(dog.getMembershipYear() < UiUtils.defaultYear());
                 } else {
                     dogAdvanceBtn.setEnabled(false);
+                    dogRenewBtn.setEnabled(false);
                 }
             }
         });
@@ -577,6 +590,17 @@ public class MembershipDialog extends JDialog implements IOwner {
         DogWrapper wrapper = dogsList.getSelectedValue();
         DogDialog dialog = new DogDialog(this, false, wrapper.dog);
         dialog.setVisible(true);
+    }
+
+    private void renewDog() {
+        int index = dogsList.getSelectedIndex();
+        if (index >= 0) {
+            Dog dog = dogsListModel.getElementAt(index).dog;
+            dogsListModel.removeElementAt(index);
+            dog.setMembershipYear(UiUtils.defaultYear());
+            dogsListModel.addElement(new DogWrapper(dog));
+            dogsList.setSelectedIndex(dogsListModel.size() - 1);
+        }
     }
 
     private void advanceDog() {
