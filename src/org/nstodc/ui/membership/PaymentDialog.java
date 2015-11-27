@@ -39,12 +39,12 @@ public class PaymentDialog extends JDialog {
         ////////////
 
         JPanel centerOuterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel centerInnerPanel = new JPanel(new GridLayout(0,1));
+        JPanel centerInnerPanel = new JPanel(new GridLayout(0, 1));
         centerOuterPanel.add(centerInnerPanel);
         getContentPane().add(centerOuterPanel, BorderLayout.CENTER);
 
         Map<Integer, PaymentType> m2 = new TreeMap<>();
-        for (PaymentType paymentType: owner.getDatabase().getPaymentTypes()) {
+        for (PaymentType paymentType : owner.getDatabase().getPaymentTypes()) {
             m2.put(paymentType.getPaymentTypeSequenceId(), paymentType);
         }
         for (PaymentType paymentType : m2.values()) {

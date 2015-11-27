@@ -18,7 +18,7 @@ public class Membership {
 
     public Membership(int membershipId, String dateJoined) {
         this.membershipId = membershipId;
-        this.dateJoined  = dateJoined;
+        this.dateJoined = dateJoined;
     }
 
     public void setMembershipTypeId(int membershipTypeId) {

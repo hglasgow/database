@@ -13,15 +13,16 @@ import java.util.TreeMap;
  * Print object for obedience printing.
  */
 public class ObediencePrintable implements Printable {
-    
+
     private final ObedienceBean obedienceBean;
     private final Map<Integer, Block> blocks = new TreeMap<>();
     private final Font plain = new Font("Serif", Font.PLAIN, 10);
     private final Font bold = new Font("Serif", Font.BOLD, 10);
+
     public ObediencePrintable(ObedienceBean obedienceBean) {
         this.obedienceBean = obedienceBean;
     }
-    
+
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
 
@@ -71,7 +72,7 @@ public class ObediencePrintable implements Printable {
         graphics.drawString("Owner", 2 * pageWidth / 11, y);
         graphics.drawString("Dog", 4 * pageWidth / 11, y);
         graphics.drawString("Promoted", 5 * pageWidth / 11, y);
-        graphics.drawString("Member#", 6 * pageWidth / 11 , y);
+        graphics.drawString("Member#", 6 * pageWidth / 11, y);
         graphics.drawString("Owner", 7 * pageWidth / 11, y);
         graphics.drawString("Dog", 9 * pageWidth / 11, y);
         graphics.drawString("Promoted", 10 * pageWidth / 11, y);
@@ -96,7 +97,7 @@ public class ObediencePrintable implements Printable {
                     graphics.fillRect(6 * pageWidth / 11, y + lineDescent, 4 * pageWidth / 11, -lineAscent);
                     graphics.setColor(Color.black);
                 }
-                graphics.drawString(trim(String.valueOf(printLine.getB().getMembershipNumber()), metrics, pageWidth / 11), 6 * pageWidth / 11,  y);
+                graphics.drawString(trim(String.valueOf(printLine.getB().getMembershipNumber()), metrics, pageWidth / 11), 6 * pageWidth / 11, y);
                 graphics.drawString(trim(printLine.getB().getFirstName() + " " + printLine.getB().getLastName(), metrics, 2 * pageWidth / 11), 7 * pageWidth / 11, y);
                 graphics.drawString(trim(printLine.getB().getDogsName(), metrics, pageWidth / 11), 9 * pageWidth / 11, y);
                 graphics.drawRect(10 * pageWidth / 11, y + lineDescent, lineAscent, -lineAscent);
@@ -150,6 +151,7 @@ public class ObediencePrintable implements Printable {
 
         private final Map<Integer, PrintLine> printLines = new TreeMap<>();
         private final String className;
+
         public Map<Integer, PrintLine> getPrintLines() {
             return printLines;
         }

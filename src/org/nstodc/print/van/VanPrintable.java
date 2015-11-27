@@ -18,6 +18,7 @@ public class VanPrintable implements Printable {
     private final Map<Integer, Block> blocks = new TreeMap<>();
     private final Font plain = new Font("Serif", Font.PLAIN, 10);
     private final Font bold = new Font("Serif", Font.BOLD, 10);
+
     public VanPrintable(VanBean vanBean) {
         this.vanBean = vanBean;
     }
@@ -88,6 +89,7 @@ public class VanPrintable implements Printable {
 
     private class Block {
         private final Map<Integer, VanDetailEntry> printLines = new TreeMap<>();
+
         public Map<Integer, VanDetailEntry> getPrintLines() {
             return printLines;
         }

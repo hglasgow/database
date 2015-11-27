@@ -36,6 +36,7 @@ public class BreedsDialog extends JDialog {
         this.owner = owner;
         init();
     }
+
     public BreedsDialog(UI owner) {
         super(owner, "Manage Breeds", true);
         this.owner = owner;
@@ -181,7 +182,7 @@ public class BreedsDialog extends JDialog {
 
         @Override
         public String toString() {
-            return breed.getBreed() + " (" + (breed.isActive() ? "active" : "inactive") + ")" ;
+            return breed.getBreed() + " (" + (breed.isActive() ? "active" : "inactive") + ")";
         }
     }
 

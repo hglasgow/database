@@ -38,7 +38,7 @@ public class HandlerDialog extends JDialog {
         ////////////
 
         JPanel centerOuterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel centerInnerPanel = new JPanel(new GridLayout(0,1));
+        JPanel centerInnerPanel = new JPanel(new GridLayout(0, 1));
         centerOuterPanel.add(centerInnerPanel);
         getContentPane().add(centerOuterPanel, BorderLayout.CENTER);
 
@@ -94,7 +94,7 @@ public class HandlerDialog extends JDialog {
                     } else {
                         saveExisting();
                     }
-                dispose();
+                    dispose();
                 }
             }
         });

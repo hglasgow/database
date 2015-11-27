@@ -419,7 +419,7 @@ public class SearchDialog extends JDialog {
                     if (membership.getMembershipId() == dog.getMembershipId()) {
                         for (Handler handler : owner.getDatabase().getHandlers()) {
                             if (handler.getMembershipId() == membership.getMembershipId()) {
-                                if (!primaryOnlyCB.isSelected() || handler.isPrimary() ) {
+                                if (!primaryOnlyCB.isSelected() || handler.isPrimary()) {
                                     Result r = new Result(membership.getMembershipId(), handler, dog);
                                     results.add(r);
                                 }
@@ -434,7 +434,7 @@ public class SearchDialog extends JDialog {
     private void sortLastName(Set<Result> results, String lastName) {
         for (Handler handler : owner.getDatabase().getHandlers()) {
             if (handler.getLastName().equalsIgnoreCase(lastName)) {
-                if (!primaryOnlyCB.isSelected() || handler.isPrimary() ) {
+                if (!primaryOnlyCB.isSelected() || handler.isPrimary()) {
                     for (Membership membership : owner.getDatabase().getMemberships()) {
                         if (membership.getMembershipId() == handler.getMembershipId()) {
                             boolean gotDog = false;
@@ -459,7 +459,7 @@ public class SearchDialog extends JDialog {
     private void sortFirstName(Set<Result> results, String firstName) {
         for (Handler handler : owner.getDatabase().getHandlers()) {
             if (handler.getFirstName().equalsIgnoreCase(firstName)) {
-                if (!primaryOnlyCB.isSelected() || handler.isPrimary() ) {
+                if (!primaryOnlyCB.isSelected() || handler.isPrimary()) {
                     for (Membership membership : owner.getDatabase().getMemberships()) {
                         if (membership.getMembershipId() == handler.getMembershipId()) {
                             boolean gotDog = false;
@@ -486,7 +486,7 @@ public class SearchDialog extends JDialog {
             if (membership.getMembershipId() == membershipId) {
                 for (Handler handler : owner.getDatabase().getHandlers()) {
                     if (handler.getMembershipId() == membershipId) {
-                        if (!primaryOnlyCB.isSelected() || handler.isPrimary() ) {
+                        if (!primaryOnlyCB.isSelected() || handler.isPrimary()) {
                             boolean gotDog = false;
                             for (Dog dog : owner.getDatabase().getDogs()) {
                                 if (dog.getMembershipId() == membershipId) {

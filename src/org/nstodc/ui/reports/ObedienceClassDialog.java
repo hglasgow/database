@@ -18,7 +18,6 @@ import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -29,7 +28,7 @@ public class ObedienceClassDialog extends JDialog {
 
     private UI owner;
     private final Map<Integer, ClassTuple> tuples = new TreeMap<>();
-    
+
     public ObedienceClassDialog(UI owner) {
 
         super(owner, "Obedience Class", true);
@@ -107,7 +106,7 @@ public class ObedienceClassDialog extends JDialog {
         int year = UiUtils.defaultYear();
         Map<Integer, ObedienceClass> map = new TreeMap<>();
         for (ClassTuple tuple : tuples.values()) {
-            SpinnerNumberModel m = (SpinnerNumberModel)(tuple.getSpinner().getModel());
+            SpinnerNumberModel m = (SpinnerNumberModel) (tuple.getSpinner().getModel());
             int v = m.getNumber().intValue();
             for (int i = 0; i < v; i++) {
                 map.put(10 * tuple.getObedienceClass().getListSequenceId() + i, tuple.getObedienceClass());
@@ -159,13 +158,13 @@ public class ObedienceClassDialog extends JDialog {
     public void dispose() {
         super.dispose();
         for (ClassTuple tuple : tuples.values()) {
-            SpinnerNumberModel m = (SpinnerNumberModel)(tuple.getSpinner().getModel());
+            SpinnerNumberModel m = (SpinnerNumberModel) (tuple.getSpinner().getModel());
             int v = m.getNumber().intValue();
             owner.getPreferences().putInt(Constants.UI_OBEDIENCE_CLASS + tuple.getObedienceClass().getObedienceClass(), v);
         }
         UiUtils.updateLocation(ObedienceClassDialog.this, owner.getPreferences());
     }
-    
+
     private class ClassTuple {
         private JSpinner spinner;
         private ObedienceClass obedienceClass;

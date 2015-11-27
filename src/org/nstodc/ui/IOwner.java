@@ -10,5 +10,6 @@ import java.util.prefs.Preferences;
 public interface IOwner {
 
     Preferences getPreferences();
+
     Database getDatabase();
 }

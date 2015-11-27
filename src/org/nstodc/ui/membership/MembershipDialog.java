@@ -10,6 +10,8 @@ import org.nstodc.ui.UiUtils;
 import org.nstodc.ui.configuration.SuburbsDialog;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -43,6 +45,11 @@ public class MembershipDialog extends JDialog implements IOwner {
     private final JList<DogWrapper> dogsList;
     private final DefaultListModel<PaymentWrapper> paymentsListModel = new DefaultListModel<>();
     private final JList<PaymentWrapper> paymentsList;
+    private final JTabbedPane tabs;
+
+    private boolean doneAutoHandlersPopup;
+    private boolean doneAutoDogsPopup;
+    private boolean doneAutoPaymentsPopup;
 
     public MembershipDialog(final UI owner, final boolean nyoo, final MembershipBundle bundle, Tabs tab) {
         super(owner, (nyoo ? "Add" : "Update") + " Membership " + bundle.getMembership().getMembershipId() + " (" + bundle.getMembership().getDateJoined() + ")", true);
@@ -52,7 +59,12 @@ public class MembershipDialog extends JDialog implements IOwner {
         UiUtils.locateAndCrippleClose(this, owner.getPreferences());
         getContentPane().setLayout(new BorderLayout());
 
-        JTabbedPane tabs = new JTabbedPane();
+        tabs = new JTabbedPane();
+        tabs.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                tabChanged();
+            }
+        });
         getContentPane().add(tabs, BorderLayout.CENTER);
 
         ////////////////
@@ -97,7 +109,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         final JLabel postcodeLabel = new JLabel();
         membershipInnerPanel.add(UiUtils.enFlow(l, postcodeLabel));
         suburbCB.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 Object item = suburbModel.getSelectedItem();
                 if (item != null) {
@@ -132,7 +143,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         UiUtils.sameWidth(addressLabel, suburbLabel, phoneLabel, mobileLabel, emailLabel);
 
         SwingUtilities.invokeLater(new Runnable() {
-            @Override
             public void run() {
                 addressTF.requestFocus();
             }
@@ -153,7 +163,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         handlersList = new JList<>(handlersListModel);
         handlersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         handlersList.addMouseListener(new MouseAdapter() {
-            @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() >= 2) {
                     editHandler();
@@ -165,7 +174,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         JPanel handlerButtonsPanel = new JPanel(new GridLayout(0, 1));
         JButton handlerAddBtn = new JButton("Add");
         handlerAddBtn.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 addHandler();
             }
@@ -173,7 +181,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         final JButton handlerEditBtn = new JButton("Edit");
         handlerEditBtn.setEnabled(false);
         handlerEditBtn.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 editHandler();
             }
@@ -181,7 +188,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         final JButton handlerDeleteBtn = new JButton("Delete");
         handlerDeleteBtn.setEnabled(false);
         handlerDeleteBtn.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 HandlerWrapper selectedValue = handlersList.getSelectedValue();
                 if (JOptionPane.showConfirmDialog(MembershipDialog.this,
@@ -202,7 +208,6 @@ public class MembershipDialog extends JDialog implements IOwner {
             handlersListModel.addElement(w);
         }
         handlersList.addListSelectionListener(new ListSelectionListener() {
-            @Override
             public void valueChanged(ListSelectionEvent e) {
                 boolean selected = handlersList.getSelectedIndex() > -1;
                 handlerEditBtn.setEnabled(selected);
@@ -228,7 +233,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         dogsList = new JList<>(dogsListModel);
         dogsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         dogsList.addMouseListener(new MouseAdapter() {
-            @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() >= 2) {
                     editDog();
@@ -240,7 +244,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         JPanel dogButtonsPanel = new JPanel(new GridLayout(0, 1));
         JButton dogAddBtn = new JButton("Add");
         dogAddBtn.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 addDog();
             }
@@ -248,7 +251,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         final JButton dogEditBtn = new JButton("Edit");
         dogEditBtn.setEnabled(false);
         dogEditBtn.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 editDog();
             }
@@ -256,7 +258,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         final JButton dogDeleteBtn = new JButton("Delete");
         dogDeleteBtn.setEnabled(false);
         dogDeleteBtn.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 DogWrapper selectedValue = dogsList.getSelectedValue();
                 if (JOptionPane.showConfirmDialog(MembershipDialog.this,
@@ -269,7 +270,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         final JButton dogAdvanceBtn = new JButton("Advance");
         dogAdvanceBtn.setEnabled(false);
         dogAdvanceBtn.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 advanceDog();
             }
@@ -278,7 +278,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         final JButton dogRenewBtn = new JButton("Renew");
         dogRenewBtn.setEnabled(false);
         dogRenewBtn.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 renewDog();
             }
@@ -297,7 +296,6 @@ public class MembershipDialog extends JDialog implements IOwner {
             dogsListModel.addElement(w);
         }
         dogsList.addListSelectionListener(new ListSelectionListener() {
-            @Override
             public void valueChanged(ListSelectionEvent e) {
                 boolean selected = dogsList.getSelectedIndex() > -1;
                 dogEditBtn.setEnabled(selected);
@@ -331,7 +329,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         paymentsList = new JList<>(paymentsListModel);
         paymentsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         paymentsList.addMouseListener(new MouseAdapter() {
-            @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() >= 2) {
                     editPayment();
@@ -343,7 +340,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         JPanel paymentButtonsPanel = new JPanel(new GridLayout(0, 1));
         JButton paymentAddBtn = new JButton("Add");
         paymentAddBtn.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 addPayment();
             }
@@ -351,7 +347,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         final JButton paymentEditBtn = new JButton("Edit");
         paymentEditBtn.setEnabled(false);
         paymentEditBtn.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 editPayment();
             }
@@ -359,7 +354,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         final JButton paymentDeleteBtn = new JButton("Delete");
         paymentDeleteBtn.setEnabled(false);
         paymentDeleteBtn.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 PaymentWrapper selectedValue = paymentsList.getSelectedValue();
                 if (JOptionPane.showConfirmDialog(MembershipDialog.this,
@@ -380,7 +374,6 @@ public class MembershipDialog extends JDialog implements IOwner {
             paymentsListModel.addElement(w);
         }
         paymentsList.addListSelectionListener(new ListSelectionListener() {
-            @Override
             public void valueChanged(ListSelectionEvent e) {
                 boolean selected = paymentsList.getSelectedIndex() > -1;
                 paymentEditBtn.setEnabled(selected);
@@ -397,7 +390,6 @@ public class MembershipDialog extends JDialog implements IOwner {
 
         JButton okButton = UiUtils.addEast(this);
         okButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 if (validateIt()) {
                     updateMembership();
@@ -419,6 +411,26 @@ public class MembershipDialog extends JDialog implements IOwner {
         }
     }
 
+    private void tabChanged() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                int tabIndex = tabs.getSelectedIndex();
+                if (nyoo) {
+                    if (tabIndex == 1 && !doneAutoHandlersPopup) { // Handlers
+                        doneAutoHandlersPopup = true;
+                        addHandler();
+                    } else if (tabIndex == 2 && !doneAutoDogsPopup) { // Dogs
+                        doneAutoDogsPopup = true;
+                        addDog();
+                    } else if (tabIndex == 3 && !doneAutoPaymentsPopup) { // Payments
+                        doneAutoPaymentsPopup = true;
+                        addPayment();
+                    }
+                }
+            }
+        });
+    }
+
     private void initSuburbs() {
         Map<String, Suburb> m2 = new TreeMap<>();
         for (Suburb suburb : owner.getDatabase().getSuburbs()) {
@@ -437,7 +449,6 @@ public class MembershipDialog extends JDialog implements IOwner {
                 suburbModel.setSelectedItem(w);
             }
         }
-
     }
 
     private void addSuburb() {
@@ -664,7 +675,6 @@ public class MembershipDialog extends JDialog implements IOwner {
         return owner.getPreferences();
     }
 
-    @Override
     public void dispose() {
         super.dispose();
         UiUtils.updateLocation(MembershipDialog.this, owner.getPreferences());
@@ -811,7 +821,7 @@ public class MembershipDialog extends JDialog implements IOwner {
 
         // Expect at least one dog, but not actually mandatory.
         if (dogsListModel.size() == 0) {
-            int i = JOptionPane.showOptionDialog(this, "No dogs have been entered.", "Dogs", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[]{"Add dog","Close anyway"}, 0);
+            int i = JOptionPane.showOptionDialog(this, "No dogs have been entered.", "Dogs", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[]{"Add dog", "Close anyway"}, 0);
             if (i == 0) {
                 return false;
             }

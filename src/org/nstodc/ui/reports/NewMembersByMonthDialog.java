@@ -125,40 +125,40 @@ public class NewMembersByMonthDialog extends JDialog {
         }
         for (int i = 0; i < counts.length; i++) {
             switch (i) {
-                case 0 :
+                case 0:
                     janL.setText("Jan: " + counts[0]);
                     break;
-                case 1 :
+                case 1:
                     febL.setText("Feb: " + counts[1]);
                     break;
-                case 2 :
+                case 2:
                     marL.setText("Mar: " + counts[2]);
                     break;
-                case 3 :
+                case 3:
                     aprL.setText("Apr: " + counts[3]);
                     break;
-                case 4 :
+                case 4:
                     mayL.setText("May: " + counts[4]);
                     break;
-                case 5 :
+                case 5:
                     junL.setText("Jun: " + counts[5]);
                     break;
-                case 6 :
+                case 6:
                     julL.setText("Jul: " + counts[6]);
                     break;
-                case 7 :
+                case 7:
                     augL.setText("Aug: " + counts[7]);
                     break;
-                case 8 :
+                case 8:
                     sepL.setText("Sep: " + counts[8]);
                     break;
-                case 9 :
+                case 9:
                     octL.setText("Oct: " + counts[9]);
                     break;
-                case 10 :
+                case 10:
                     novL.setText("Nov: " + counts[10]);
                     break;
-                case 11 :
+                case 11:
                     decL.setText("Dec: " + counts[11]);
                     break;
             }

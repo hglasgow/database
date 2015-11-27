@@ -59,7 +59,7 @@ public class DogDialog extends JDialog implements IOwner {
         ////////////
 
         JPanel centerOuterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel centerInnerPanel = new JPanel(new GridLayout(0,1));
+        JPanel centerInnerPanel = new JPanel(new GridLayout(0, 1));
         centerOuterPanel.add(centerInnerPanel);
         getContentPane().add(centerOuterPanel, BorderLayout.CENTER);
 
