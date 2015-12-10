@@ -333,12 +333,27 @@ public class UI extends JFrame implements IOwner {
             });
 
             // Sponsor Report
-            JMenuItem sponsorReportItem = new JMenuItem("Sponsor Report...");
-            reportsMenu.add(sponsorReportItem);
-            sponsorReportItem.setMnemonic(KeyEvent.VK_S);
-            sponsorReportItem.addActionListener(new ActionListener() {
+            JMenu sponsorReport = new JMenu("Sponsor Report");
+            sponsorReport.setMnemonic(KeyEvent.VK_S);
+            reportsMenu.add(sponsorReport);
+
+            // Sponsor Report Monthly
+            JMenuItem sponsorReportMonthlyItem = new JMenuItem("Monthly...");
+            sponsorReport.add(sponsorReportMonthlyItem);
+            sponsorReportMonthlyItem.setMnemonic(KeyEvent.VK_M);
+            sponsorReportMonthlyItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    sponsorReport();
+                    sponsorMonthlyReport();
+                }
+            });
+
+            // Sponsor Report Baseline
+            JMenuItem sponsorReportBaselineItem = new JMenuItem("Baseline...");
+            sponsorReport.add(sponsorReportBaselineItem);
+            sponsorReportBaselineItem.setMnemonic(KeyEvent.VK_B);
+            sponsorReportBaselineItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    sponsorBaselineReport();
                 }
             });
 
@@ -580,7 +595,7 @@ public class UI extends JFrame implements IOwner {
         d.setVisible(true);
     }
 
-    private void sponsorReport() {
+    private void sponsorMonthlyReport() {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_MONTH, 1);
         cal.add(Calendar.DATE, -1);
@@ -692,6 +707,115 @@ public class UI extends JFrame implements IOwner {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void sponsorBaselineReport() {
+        try {
+            Map<String, SponsorshipReportLine> map = new TreeMap<>();
+            for (Membership membership : database.getMemberships()) {
+
+                if (!membership.isAllowSponsorship()) {
+                    continue;
+                }
+
+                if (!membershipHasCurrentDog(membership.getMembershipId())) {
+                    continue;
+                }
+
+                String address = membership.getAddress();
+                String phone = membership.getPhone();
+                String mobile = membership.getMobile();
+                String date = membership.getDateJoined();
+                String suburb = "";
+                String postcode = "";
+
+                for (Suburb s : database.getSuburbs()) {
+                    if (membership.getSuburbId() == s.getSuburbId()) {
+                        suburb = s.getSuburb();
+                        postcode = s.getPostcode();
+                        break;
+                    }
+                }
+
+                for (Handler handler : database.getHandlers()) {
+                    if (handler.getMembershipId() == membership.getMembershipId()) {
+                        String firstName = handler.getFirstName();
+                        String lastName = handler.getLastName();
+                        SponsorshipReportLine line = new SponsorshipReportLine(lastName, firstName, phone, mobile,
+                                address, suburb, postcode, date);
+                        map.put(line.lastName + line.firstName + String.valueOf(Math.random()), line);
+                    }
+                }
+            }
+
+            JFileChooser chooser = new JFileChooser();
+            chooser.setAcceptAllFileFilterUsed(false);
+            chooser.addChoosableFileFilter(new ExtensionFileFilter("Excel Files", "xls"));
+            int result = chooser.showSaveDialog(this);
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            if (result == JFileChooser.APPROVE_OPTION) {
+
+                Workbook wb = new HSSFWorkbook();
+                Sheet sheet1 = wb.createSheet("Sheet 1");
+
+                Row headings = sheet1.createRow(0);
+                Cell cell = headings.createCell(0);
+                cell.setCellValue("Last Name");
+                cell = headings.createCell(1);
+                cell.setCellValue("First Name");
+                cell = headings.createCell(2);
+                cell.setCellValue("Phone");
+                cell = headings.createCell(3);
+                cell.setCellValue("Mobile");
+                cell = headings.createCell(4);
+                cell.setCellValue("Address");
+                cell = headings.createCell(5);
+                cell.setCellValue("Suburb");
+                cell = headings.createCell(6);
+                cell.setCellValue("Postcode");
+                cell = headings.createCell(7);
+                cell.setCellValue("Date");
+
+                int rowNumber = 1;
+                for (SponsorshipReportLine line : map.values()) {
+                    Row row = sheet1.createRow(rowNumber++);
+                    cell = row.createCell(0);
+                    cell.setCellValue(purify(line.lastName));
+                    cell = row.createCell(1);
+                    cell.setCellValue(purify(line.firstName));
+                    cell = row.createCell(2);
+                    cell.setCellValue(purify(line.phone));
+                    cell = row.createCell(3);
+                    cell.setCellValue(purify(line.mobile));
+                    cell = row.createCell(4);
+                    cell.setCellValue(purify(line.address));
+                    cell = row.createCell(5);
+                    cell.setCellValue(purify(line.suburb));
+                    cell = row.createCell(6);
+                    cell.setCellValue(purify(line.postcode));
+                    cell = row.createCell(7);
+                    cell.setCellValue(purify(line.date));
+                }
+
+                File file = chooser.getSelectedFile();
+                FileOutputStream fileOut = new FileOutputStream(file);
+                wb.write(fileOut);
+                fileOut.close();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private boolean membershipHasCurrentDog(int membershipId) {
+        int year = UiUtils.defaultYear();
+        for (Dog dog : database.getDogs()) {
+            if (dog.getMembershipId() == membershipId &&
+                    dog.getMembershipYear() == year) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String purify(String str) {
