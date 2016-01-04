@@ -7,6 +7,8 @@ import org.nstodc.ui.UI;
 import org.nstodc.ui.UiUtils;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +19,7 @@ public class MembershipCountReportDialog extends JDialog {
     private DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
     private JComboBox<String> combo = new JComboBox<>(model);
     private JLabel results = new JLabel("Results:");
+    private JCheckBox lastYear = new JCheckBox("Last year");
 
     public MembershipCountReportDialog(UI owner) {
         super(owner, "Membership Count", true);
@@ -32,10 +35,16 @@ public class MembershipCountReportDialog extends JDialog {
         model.addElement("Agility");
         model.addElement("DWD");
 
+        getContentPane().add(UiUtils.enFlow(lastYear), BorderLayout.NORTH);
         getContentPane().add(UiUtils.enFlow(new JLabel("Type"), combo), BorderLayout.CENTER);
         getContentPane().add(UiUtils.enFlow(results), BorderLayout.SOUTH);
         combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                updateResults();
+            }
+        });
+        lastYear.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
                 updateResults();
             }
         });
@@ -61,12 +70,16 @@ public class MembershipCountReportDialog extends JDialog {
         combo.setEnabled(false);
         try {
             int count = 0;
+            int year = UiUtils.defaultYear();
+            if (lastYear.isSelected()) {
+                year -= 1;
+            }
             String type = (String) combo.getSelectedItem();
             Database database = owner.getDatabase();
             for (Membership membership : database.getMemberships()) {
                 for (Dog dog : database.getDogs()) {
                     if (membership.getMembershipId() == dog.getMembershipId()) {
-                        if (dog.getMembershipYear() >= UiUtils.defaultYear()) {
+                        if (dog.getMembershipYear() >= year) {
                             if (type.equals("Any")) {
                                 count++;
                                 break;

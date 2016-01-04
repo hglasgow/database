@@ -367,8 +367,8 @@ public class UI extends JFrame implements IOwner {
                 }
             });
 
-            // Count of memberships by type
-            JMenuItem membershipCountItem = new JMenuItem("Membership Count...");
+            // Count of financial memberships by type
+            JMenuItem membershipCountItem = new JMenuItem("Financial Membership Count...");
             reportsMenu.add(membershipCountItem);
             membershipCountItem.setMnemonic(KeyEvent.VK_C);
             membershipCountItem.addActionListener(new ActionListener() {
