@@ -17,10 +17,7 @@ import org.nstodc.ui.configuration.PaymentAmountDialog;
 import org.nstodc.ui.configuration.SuburbsDialog;
 import org.nstodc.ui.membership.MembershipBundle;
 import org.nstodc.ui.membership.MembershipDialog;
-import org.nstodc.ui.reports.MembershipCountReportDialog;
-import org.nstodc.ui.reports.NewMembersByMonthDialog;
-import org.nstodc.ui.reports.ObedienceClassDialog;
-import org.nstodc.ui.reports.StatsDialog;
+import org.nstodc.ui.reports.*;
 import org.nstodc.ui.search.SearchDialog;
 
 import javax.swing.*;
@@ -367,13 +364,23 @@ public class UI extends JFrame implements IOwner {
                 }
             });
 
-            // Count of financial memberships by type
-            JMenuItem membershipCountItem = new JMenuItem("Financial Membership Count...");
-            reportsMenu.add(membershipCountItem);
-            membershipCountItem.setMnemonic(KeyEvent.VK_C);
-            membershipCountItem.addActionListener(new ActionListener() {
+            // Count of membership by year by type
+            JMenuItem membershipYearItem = new JMenuItem("Membership Year Count...");
+            reportsMenu.add(membershipYearItem);
+            membershipYearItem.setMnemonic(KeyEvent.VK_Y);
+            membershipYearItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    membershipCountReport();
+                    membershipYearReport();
+                }
+            });
+
+            // Count of membership by payment year
+            JMenuItem membershipPaymentItem = new JMenuItem("Membership Payment Count...");
+            reportsMenu.add(membershipPaymentItem);
+            membershipPaymentItem.setMnemonic(KeyEvent.VK_P);
+            membershipPaymentItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    membershipPaymentReport();
                 }
             });
 
@@ -590,8 +597,13 @@ public class UI extends JFrame implements IOwner {
         return results;
     }
 
-    private void membershipCountReport() {
-        MembershipCountReportDialog d = new MembershipCountReportDialog(this);
+    private void membershipYearReport() {
+        MembershipYearReportDialog d = new MembershipYearReportDialog(this);
+        d.setVisible(true);
+    }
+
+    private void membershipPaymentReport() {
+        MembershipPaymentReportDialog d = new MembershipPaymentReportDialog(this);
         d.setVisible(true);
     }
 

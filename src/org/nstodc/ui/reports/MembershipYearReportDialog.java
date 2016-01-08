@@ -13,7 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MembershipCountReportDialog extends JDialog {
+public class MembershipYearReportDialog extends JDialog {
 
     private UI owner;
     private DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
@@ -21,8 +21,8 @@ public class MembershipCountReportDialog extends JDialog {
     private JLabel results = new JLabel("Results:");
     private JCheckBox lastYear = new JCheckBox("Last year");
 
-    public MembershipCountReportDialog(UI owner) {
-        super(owner, "Membership Count", true);
+    public MembershipYearReportDialog(UI owner) {
+        super(owner, "Membership Year Count", true);
         this.owner = owner;
         UiUtils.locateAndCrippleClose(this, owner.getPreferences());
         getContentPane().setLayout(new BorderLayout());
@@ -105,7 +105,7 @@ public class MembershipCountReportDialog extends JDialog {
 
     public void dispose() {
         super.dispose();
-        UiUtils.updateLocation(MembershipCountReportDialog.this, owner.getPreferences());
+        UiUtils.updateLocation(MembershipYearReportDialog.this, owner.getPreferences());
     }
 
 }
