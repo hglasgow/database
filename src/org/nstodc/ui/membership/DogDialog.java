@@ -181,8 +181,12 @@ public class DogDialog extends JDialog implements IOwner {
             m.put(breed.getBreed(), breed);
         }
         breedListModel.removeAllElements();
+        Breed b = new Breed(-1);
+        b.setBreed("Select Breed");
+        BreedWrapper w = new BreedWrapper(b);
+        breedListModel.addElement(w);
         for (Breed breed : m.values()) {
-            BreedWrapper w = new BreedWrapper(breed);
+            w = new BreedWrapper(breed);
             if (breed.isActive() || dog.getBreedId() == breed.getBreedId()) {
                 breedListModel.addElement(w);
             }
@@ -247,9 +251,17 @@ public class DogDialog extends JDialog implements IOwner {
     }
 
     private boolean validateIt() {
+
         // Dog must have a name
         if (dogNameTF.getText().trim().length() == 0) {
             JOptionPane.showMessageDialog(this, "Name required.", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Need a breed
+        int id = ((BreedWrapper) breedList.getSelectedItem()).breed.getBreedId();
+        if (id < 0) {
+            JOptionPane.showMessageDialog(this, "Breed required.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
