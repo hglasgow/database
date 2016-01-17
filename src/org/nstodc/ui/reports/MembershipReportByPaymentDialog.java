@@ -1,7 +1,6 @@
 package org.nstodc.ui.reports;
 
 import org.nstodc.database.Database;
-import org.nstodc.database.type.Dog;
 import org.nstodc.database.type.Membership;
 import org.nstodc.database.type.Payment;
 import org.nstodc.ui.UI;
@@ -14,13 +13,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MembershipPaymentReportDialog extends JDialog {
+public class MembershipReportByPaymentDialog extends JDialog {
 
     private UI owner;
     private JLabel results = new JLabel("Results:");
     private JCheckBox lastYear = new JCheckBox("Last year");
 
-    public MembershipPaymentReportDialog(UI owner) {
+    public MembershipReportByPaymentDialog(UI owner) {
         super(owner, "Membership Payment Count", true);
         this.owner = owner;
         UiUtils.locateAndCrippleClose(this, owner.getPreferences());
@@ -29,8 +28,12 @@ public class MembershipPaymentReportDialog extends JDialog {
         ////////////
         // Center //
         ////////////
-        getContentPane().add(UiUtils.enFlow(lastYear), BorderLayout.NORTH);
-        getContentPane().add(UiUtils.enFlow(results), BorderLayout.SOUTH);
+        JPanel center = new JPanel(new BorderLayout());
+        getContentPane().add(UiUtils.enFlow(center));
+
+        center.add(UiUtils.enFlow(lastYear), BorderLayout.NORTH);
+        center.add(UiUtils.enFlow(results), BorderLayout.SOUTH);
+
         lastYear.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 updateResults();
@@ -76,7 +79,7 @@ public class MembershipPaymentReportDialog extends JDialog {
 
     public void dispose() {
         super.dispose();
-        UiUtils.updateLocation(MembershipPaymentReportDialog.this, owner.getPreferences());
+        UiUtils.updateLocation(MembershipReportByPaymentDialog.this, owner.getPreferences());
     }
 
 }

@@ -13,7 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MembershipYearReportDialog extends JDialog {
+public class MembershipeportByDogDialog extends JDialog {
 
     private UI owner;
     private DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
@@ -21,7 +21,7 @@ public class MembershipYearReportDialog extends JDialog {
     private JLabel results = new JLabel("Results:");
     private JCheckBox lastYear = new JCheckBox("Last year");
 
-    public MembershipYearReportDialog(UI owner) {
+    public MembershipeportByDogDialog(UI owner) {
         super(owner, "Membership Year Count", true);
         this.owner = owner;
         UiUtils.locateAndCrippleClose(this, owner.getPreferences());
@@ -35,9 +35,13 @@ public class MembershipYearReportDialog extends JDialog {
         model.addElement("Agility");
         model.addElement("DWD");
 
-        getContentPane().add(UiUtils.enFlow(lastYear), BorderLayout.NORTH);
-        getContentPane().add(UiUtils.enFlow(new JLabel("Type"), combo), BorderLayout.CENTER);
-        getContentPane().add(UiUtils.enFlow(results), BorderLayout.SOUTH);
+        JPanel center = new JPanel(new BorderLayout());
+        getContentPane().add(UiUtils.enFlow(center));
+
+        center.add(UiUtils.enFlow(lastYear), BorderLayout.NORTH);
+        center.add(UiUtils.enFlow(new JLabel("Type"), combo), BorderLayout.CENTER);
+        center.add(UiUtils.enFlow(results), BorderLayout.SOUTH);
+
         combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateResults();
@@ -105,7 +109,7 @@ public class MembershipYearReportDialog extends JDialog {
 
     public void dispose() {
         super.dispose();
-        UiUtils.updateLocation(MembershipYearReportDialog.this, owner.getPreferences());
+        UiUtils.updateLocation(MembershipeportByDogDialog.this, owner.getPreferences());
     }
 
 }

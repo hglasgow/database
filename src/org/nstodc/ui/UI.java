@@ -329,6 +329,27 @@ public class UI extends JFrame implements IOwner {
                 }
             });
 
+            // Van Report
+            JMenuItem vanReportItem = new JMenuItem("Van Report...");
+            reportsMenu.add(vanReportItem);
+            vanReportItem.setMnemonic(KeyEvent.VK_V);
+            vanReportItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    vanReport();
+                }
+            });
+
+            // Stats
+            JMenuItem statsItem = new JMenuItem("Statistics...");
+            reportsMenu.add(statsItem);
+            statsItem.setMnemonic(KeyEvent.VK_S);
+            statsItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    statsReport();
+                }
+            });
+
+
             // Sponsor Report
             JMenu sponsorReport = new JMenu("Sponsor Report");
             sponsorReport.setMnemonic(KeyEvent.VK_S);
@@ -354,43 +375,29 @@ public class UI extends JFrame implements IOwner {
                 }
             });
 
-            // Van Report
-            JMenuItem vanReportItem = new JMenuItem("Van Report...");
-            reportsMenu.add(vanReportItem);
-            vanReportItem.setMnemonic(KeyEvent.VK_V);
-            vanReportItem.addActionListener(new ActionListener() {
+
+            // Membership Reports
+            JMenu membershipItem = new JMenu("Membership");
+            reportsMenu.add(membershipItem);
+            membershipItem.setMnemonic(KeyEvent.VK_M);
+
+            // Membership by Dog Year
+            JMenuItem membershipByDogItem = new JMenuItem("By Dog...");
+            membershipItem.add(membershipByDogItem);
+            membershipByDogItem.setMnemonic(KeyEvent.VK_D);
+            membershipByDogItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    vanReport();
+                    membershipReportByDog();
                 }
             });
 
-            // Count of membership by year by type
-            JMenuItem membershipYearItem = new JMenuItem("Membership Year Count...");
-            reportsMenu.add(membershipYearItem);
-            membershipYearItem.setMnemonic(KeyEvent.VK_Y);
-            membershipYearItem.addActionListener(new ActionListener() {
+            // Membership by Dog Year
+            JMenuItem membershipByPaymentItem = new JMenuItem("By Payment...");
+            membershipItem.add(membershipByPaymentItem);
+            membershipByPaymentItem.setMnemonic(KeyEvent.VK_P);
+            membershipByPaymentItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    membershipYearReport();
-                }
-            });
-
-            // Count of membership by payment year
-            JMenuItem membershipPaymentItem = new JMenuItem("Membership Payment Count...");
-            reportsMenu.add(membershipPaymentItem);
-            membershipPaymentItem.setMnemonic(KeyEvent.VK_P);
-            membershipPaymentItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    membershipPaymentReport();
-                }
-            });
-
-            // Stats
-            JMenuItem statsItem = new JMenuItem("Statistics...");
-            reportsMenu.add(statsItem);
-            statsItem.setMnemonic(KeyEvent.VK_S);
-            statsItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    statsReport();
+                    membershipReportByPayment();
                 }
             });
         }
@@ -597,13 +604,13 @@ public class UI extends JFrame implements IOwner {
         return results;
     }
 
-    private void membershipYearReport() {
-        MembershipYearReportDialog d = new MembershipYearReportDialog(this);
+    private void membershipReportByDog() {
+        MembershipeportByDogDialog d = new MembershipeportByDogDialog(this);
         d.setVisible(true);
     }
 
-    private void membershipPaymentReport() {
-        MembershipPaymentReportDialog d = new MembershipPaymentReportDialog(this);
+    private void membershipReportByPayment() {
+        MembershipReportByPaymentDialog d = new MembershipReportByPaymentDialog(this);
         d.setVisible(true);
     }
 
