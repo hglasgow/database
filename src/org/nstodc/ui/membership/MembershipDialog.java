@@ -643,6 +643,10 @@ public class MembershipDialog extends JDialog implements IOwner {
     }
 
     public void addHandler() {
+        addHandler("");
+    }
+
+    public void addHandler(String lastName) {
         int nextHandlerId = 1;
         // Check db, then locally.
         for (Handler handler : owner.getDatabase().getHandlers()) {
@@ -660,6 +664,9 @@ public class MembershipDialog extends JDialog implements IOwner {
         Handler h = new Handler(nextHandlerId, membership.getMembershipId());
         if (handlersListModel.isEmpty()) {
             h.setPrimary(true);
+        }
+        if (lastName != null && lastName.length() > 0) {
+            h.setLastName(lastName);
         }
         HandlerDialog dialog = new HandlerDialog(this, true, h);
         dialog.setVisible(true);

@@ -60,6 +60,7 @@ public class HandlerDialog extends JDialog {
         //////////
 
         JButton addButtonNext = null;
+        JButton addButtonNextCopyLastName = null;
         if (nyoo) {
             addButtonNext = new JButton("Add Next");
             addButtonNext.addActionListener(new ActionListener() {
@@ -79,9 +80,27 @@ public class HandlerDialog extends JDialog {
                     }
                 }
             });
+            addButtonNextCopyLastName = new JButton("ANCL");
+            addButtonNextCopyLastName.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (validateIt()) {
+                        handler.setFirstName(firstNameTF.getText().trim());
+                        handler.setLastName(lastNameTF.getText().trim());
+                        handler.setCrn(crnTF.getText().trim());
+                        handler.setPrimary(primaryCB.isSelected());
+                        saveNew();
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                owner.addHandler(lastNameTF.getText().trim());
+                            }
+                        });
+                        dispose();
+                    }
+                }
+            });
         }
 
-        JButton okButton = UiUtils.addEast(this, addButtonNext);
+        JButton okButton = UiUtils.addEast(this, addButtonNext, addButtonNextCopyLastName);
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (validateIt()) {

@@ -7,7 +7,7 @@ import java.awt.*;
  */
 public class Constants {
     public static final String UI_TITLE = "NST&ODC Database";
-    public static final String UI_VERSION = "Version 2.31";
+    public static final String UI_VERSION = "Version 2.32";
 
     public static final String UI_X = "x";
     public static final String UI_Y = "y";
