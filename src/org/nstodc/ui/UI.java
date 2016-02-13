@@ -77,12 +77,14 @@ public class UI extends JFrame implements IOwner {
                         loadDatabase();
                     }
                     setUITitle();
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            checkLastArchived();
-                        }
-                    });
+                    if (!init) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                checkLastArchived();
+                            }
+                        });
+                    }
                 } catch (Exception e) {
                     // Don't care.
                 }
@@ -127,9 +129,14 @@ public class UI extends JFrame implements IOwner {
             System.exit(0);
         } else {
             database = new Database();
-            JOptionPane.showMessageDialog(this, "New database initialized.",
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
-            loadedDatabaseSuccessfully.set(true);
+            int x = JOptionPane.showConfirmDialog(this, "Initialize new database at " + fileLocation + "?",
+                    "Information", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (x == JOptionPane.YES_OPTION) {
+                loadedDatabaseSuccessfully.set(true);
+                tryToClose();
+            } else {
+                System.exit(0);
+            }
         }
     }
 
