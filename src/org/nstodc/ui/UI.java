@@ -128,10 +128,10 @@ public class UI extends JFrame implements IOwner {
                     "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         } else {
-            database = new Database();
             int x = JOptionPane.showConfirmDialog(this, "Initialize new database at " + fileLocation + "?",
                     "Information", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (x == JOptionPane.YES_OPTION) {
+                database = new Database();
                 loadedDatabaseSuccessfully.set(true);
                 tryToClose();
             } else {
