@@ -131,6 +131,17 @@ public class UiUtils {
         } catch (ParseException e) {
             return false;
         }
+        String[] parts = dateOfBirth.split("/");
+        if (parts.length != 3) {
+            return false;
+        }
+        if (parts[2].length() != 4) {
+            return false;
+        }
+        int year = Integer.parseInt(parts[2]);
+        if (year < 1900 || year > 2100) {
+            return false;
+        }
         return true;
     }
 
