@@ -7,7 +7,7 @@ import java.awt.*;
  */
 public class Constants {
     public static final String UI_TITLE = "NST&ODC Database";
-    public static final String UI_VERSION = "Version 2.32";
+    public static final String UI_VERSION = "Version 2.33";
 
     public static final String UI_X = "x";
     public static final String UI_Y = "y";
@@ -19,6 +19,7 @@ public class Constants {
     public static final int UI_WIDTH_DEFAULT = 600;
     public static final int UI_HEIGHT_DEFAULT = 400;
     public static final int UI_STATE_DEFAULT = Frame.NORMAL;
+    public static final String UI_LAST_START_TIME = "t";
 
     public static final String DATABASE_FILE_LOCATION = "f";
     public static final String DATABASE_FILE_LOCATION_DEFAULT = "C:\\data";

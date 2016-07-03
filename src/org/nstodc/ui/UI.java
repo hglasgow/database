@@ -3,6 +3,7 @@ package org.nstodc.ui;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -44,8 +45,11 @@ public class UI extends JFrame implements IOwner {
     private final Preferences preferences = Preferences.userNodeForPackage(getClass());
     private Database database = new Database();
     private final AtomicBoolean loadedDatabaseSuccessfully = new AtomicBoolean();
-    private final JMenuItem latestMenuItem;
+    private final JMenuItem latestMenuItem = new JMenuItem("Edit Latest...");
     private int latestMembership;
+    private final AtomicBoolean splashActive = new AtomicBoolean(true);
+    private final Splash splash = new Splash(UI.this);
+    private int startTime = 0;
 
     public static void main(String[] args) {
         UI ui = new UI(args.length == 1 && args[0].equals("init"));
@@ -60,7 +64,6 @@ public class UI extends JFrame implements IOwner {
         } catch (Exception e) {
             // Don't care.
         }
-        latestMenuItem = new JMenuItem("Edit Latest...");
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 tryToClose();
@@ -68,9 +71,28 @@ public class UI extends JFrame implements IOwner {
         });
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         doPreferences();
+
+        final Thread splashThread = new Thread() {
+            public void run() {
+                splash.setPosition();
+                splash.setVisible(true);
+                splash.setLastStartTime(preferences.getInt(Constants.UI_LAST_START_TIME, 10000));
+                while (splashActive.get()) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        // Don't care
+                    }
+                    splash.uptick();
+                }
+            }
+        };
+        splashThread.start();
+
         final Thread t = new Thread() {
             public void run() {
                 try {
+                    long start = Calendar.getInstance().getTime().getTime();
                     if (init) {
                         initializeDatabase();
                     } else {
@@ -78,13 +100,10 @@ public class UI extends JFrame implements IOwner {
                     }
                     setUITitle();
                     if (!init) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                checkLastArchived();
-                            }
-                        });
+                        SwingUtilities.invokeLater(() -> checkLastArchived());
                     }
+                    long end = Calendar.getInstance().getTime().getTime();
+                    startTime = (int)(end - start);
                 } catch (Exception e) {
                     // Don't care.
                 }
@@ -206,12 +225,14 @@ public class UI extends JFrame implements IOwner {
 
         loadedDatabaseSuccessfully.set(success);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                doMenu();
-            }
-        });
+        SwingUtilities.invokeLater(this::cancelSplash);
+        SwingUtilities.invokeLater(this::doMenu);
+    }
+
+    private void cancelSplash() {
+        splash.setVisible(false);
+        splashActive.set(false);
+
     }
 
     private void doMenu() {
@@ -231,22 +252,16 @@ public class UI extends JFrame implements IOwner {
             fileMenu.add(addMenuItem);
             addMenuItem.setMnemonic(KeyEvent.VK_A);
             addMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
-            addMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    addMembership();
-                }
-            });
+            addMenuItem.addActionListener(e -> addMembership());
 
             // Search
             JMenuItem searchMenuItem = new JMenuItem("Search...");
             fileMenu.add(searchMenuItem);
             searchMenuItem.setMnemonic(KeyEvent.VK_E);
             searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
-            searchMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    SearchDialog d = new SearchDialog(UI.this);
-                    d.setVisible(true);
-                }
+            searchMenuItem.addActionListener(e -> {
+                SearchDialog d = new SearchDialog(UI.this);
+                d.setVisible(true);
             });
 
             // Latest
@@ -254,11 +269,7 @@ public class UI extends JFrame implements IOwner {
             latestMenuItem.setMnemonic(KeyEvent.VK_L);
             latestMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK));
             latestMenuItem.setEnabled(false);
-            latestMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    editMembership(latestMembership, Tabs.Membership);
-                }
-            });
+            latestMenuItem.addActionListener(e -> editMembership(latestMembership, Tabs.Membership));
 
             fileMenu.addSeparator();
 
@@ -267,21 +278,13 @@ public class UI extends JFrame implements IOwner {
             fileMenu.add(saveMenuItem);
             saveMenuItem.setMnemonic(KeyEvent.VK_S);
             saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
-            saveMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    saveDatabase();
-                }
-            });
+            saveMenuItem.addActionListener(e -> saveDatabase());
 
             // Archive
             JMenuItem archiveMenuItem = new JMenuItem("Archive");
             fileMenu.add(archiveMenuItem);
             archiveMenuItem.setMnemonic(KeyEvent.VK_A);
-            archiveMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    archiveDatabase();
-                }
-            });
+            archiveMenuItem.addActionListener(e -> archiveDatabase());
 
             fileMenu.addSeparator();
 
@@ -289,11 +292,7 @@ public class UI extends JFrame implements IOwner {
             JMenuItem exitWithoutMenuItem = new JMenuItem("Exit Without Saving...");
             fileMenu.add(exitWithoutMenuItem);
             archiveMenuItem.setMnemonic(KeyEvent.VK_W);
-            exitWithoutMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    exitWithoutSaving();
-                }
-            });
+            exitWithoutMenuItem.addActionListener(e -> exitWithoutSaving());
         }
 
         // Exit
@@ -301,11 +300,7 @@ public class UI extends JFrame implements IOwner {
         fileMenu.add(exitMenuItem);
         exitMenuItem.setMnemonic(KeyEvent.VK_X);
         exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK));
-        exitMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tryToClose();
-            }
-        });
+        exitMenuItem.addActionListener(e -> tryToClose());
 
         /////////////
         // Reports //
@@ -319,42 +314,28 @@ public class UI extends JFrame implements IOwner {
             JMenuItem obedienceClassMenuItem = new JMenuItem("Obedience Classes...");
             reportsMenu.add(obedienceClassMenuItem);
             obedienceClassMenuItem.setMnemonic(KeyEvent.VK_O);
-            obedienceClassMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    ObedienceClassDialog d = new ObedienceClassDialog(UI.this);
-                    d.setVisible(true);
-                }
+            obedienceClassMenuItem.addActionListener(e -> {
+                ObedienceClassDialog d = new ObedienceClassDialog(UI.this);
+                d.setVisible(true);
             });
 
             // New Members
             JMenuItem newMembersByMonthItem = new JMenuItem("New Members...");
             reportsMenu.add(newMembersByMonthItem);
             newMembersByMonthItem.setMnemonic(KeyEvent.VK_N);
-            newMembersByMonthItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    newMembersByMonth();
-                }
-            });
+            newMembersByMonthItem.addActionListener(e -> newMembersByMonth());
 
             // Van Report
             JMenuItem vanReportItem = new JMenuItem("Van Report...");
             reportsMenu.add(vanReportItem);
             vanReportItem.setMnemonic(KeyEvent.VK_V);
-            vanReportItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    vanReport();
-                }
-            });
+            vanReportItem.addActionListener(e -> vanReport());
 
             // Stats
             JMenuItem statsItem = new JMenuItem("Statistics...");
             reportsMenu.add(statsItem);
             statsItem.setMnemonic(KeyEvent.VK_S);
-            statsItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    statsReport();
-                }
-            });
+            statsItem.addActionListener(e -> statsReport());
 
 
             // Sponsor Report
@@ -366,21 +347,13 @@ public class UI extends JFrame implements IOwner {
             JMenuItem sponsorReportMonthlyItem = new JMenuItem("Monthly...");
             sponsorReport.add(sponsorReportMonthlyItem);
             sponsorReportMonthlyItem.setMnemonic(KeyEvent.VK_M);
-            sponsorReportMonthlyItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    sponsorMonthlyReport();
-                }
-            });
+            sponsorReportMonthlyItem.addActionListener(e -> sponsorMonthlyReport());
 
             // Sponsor Report Baseline
             JMenuItem sponsorReportBaselineItem = new JMenuItem("Baseline...");
             sponsorReport.add(sponsorReportBaselineItem);
             sponsorReportBaselineItem.setMnemonic(KeyEvent.VK_B);
-            sponsorReportBaselineItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    sponsorBaselineReport();
-                }
-            });
+            sponsorReportBaselineItem.addActionListener(e -> sponsorBaselineReport());
 
 
             // Membership Reports
@@ -392,21 +365,13 @@ public class UI extends JFrame implements IOwner {
             JMenuItem membershipByDogItem = new JMenuItem("By Dog...");
             membershipItem.add(membershipByDogItem);
             membershipByDogItem.setMnemonic(KeyEvent.VK_D);
-            membershipByDogItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    membershipReportByDog();
-                }
-            });
+            membershipByDogItem.addActionListener(e -> membershipReportByDog());
 
             // Membership by Dog Year
             JMenuItem membershipByPaymentItem = new JMenuItem("By Payment...");
             membershipItem.add(membershipByPaymentItem);
             membershipByPaymentItem.setMnemonic(KeyEvent.VK_P);
-            membershipByPaymentItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    membershipReportByPayment();
-                }
-            });
+            membershipByPaymentItem.addActionListener(e -> membershipReportByPayment());
         }
 
         ///////////////////
@@ -420,33 +385,27 @@ public class UI extends JFrame implements IOwner {
             JMenuItem paymentAmountMenuItem = new JMenuItem("Payment Amount...");
             configurationMenu.add(paymentAmountMenuItem);
             paymentAmountMenuItem.setMnemonic(KeyEvent.VK_P);
-            paymentAmountMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    PaymentAmountDialog d = new PaymentAmountDialog(UI.this);
-                    d.setVisible(true);
-                }
+            paymentAmountMenuItem.addActionListener(e -> {
+                PaymentAmountDialog d = new PaymentAmountDialog(UI.this);
+                d.setVisible(true);
             });
 
             // Breeds
             JMenuItem breedsMenuItem = new JMenuItem("Dog Breeds...");
             configurationMenu.add(breedsMenuItem);
             breedsMenuItem.setMnemonic(KeyEvent.VK_D);
-            breedsMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    BreedsDialog d = new BreedsDialog(UI.this);
-                    d.setVisible(true);
-                }
+            breedsMenuItem.addActionListener(e -> {
+                BreedsDialog d = new BreedsDialog(UI.this);
+                d.setVisible(true);
             });
 
             // Suburbs
             JMenuItem suburbsMenuItem = new JMenuItem("Suburbs...");
             configurationMenu.add(suburbsMenuItem);
             suburbsMenuItem.setMnemonic(KeyEvent.VK_S);
-            suburbsMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    SuburbsDialog d = new SuburbsDialog(UI.this);
-                    d.setVisible(true);
-                }
+            suburbsMenuItem.addActionListener(e -> {
+                SuburbsDialog d = new SuburbsDialog(UI.this);
+                d.setVisible(true);
             });
 
             configurationMenu.addSeparator();
@@ -456,22 +415,14 @@ public class UI extends JFrame implements IOwner {
         JMenuItem databaseMenuItem = new JMenuItem("Database Location...");
         configurationMenu.add(databaseMenuItem);
         databaseMenuItem.setMnemonic(KeyEvent.VK_D);
-        databaseMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                selectDatabase();
-            }
-        });
+        databaseMenuItem.addActionListener(e -> selectDatabase());
 
         if (loadedDatabaseSuccessfully.get()) {
             // Archive
             JMenuItem archiveLocationMenuItem = new JMenuItem("Archive Location...");
             configurationMenu.add(archiveLocationMenuItem);
             archiveLocationMenuItem.setMnemonic(KeyEvent.VK_A);
-            archiveLocationMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    archiveLocation();
-                }
-            });
+            archiveLocationMenuItem.addActionListener(e -> archiveLocation());
         }
 
     }
@@ -1040,6 +991,7 @@ public class UI extends JFrame implements IOwner {
                     preferences.putInt(UI_HEIGHT, getHeight());
                 }
                 preferences.putInt(UI_STATE, getExtendedState());
+                preferences.putInt(Constants.UI_LAST_START_TIME, startTime);
                 preferences.flush();
             } catch (BackingStoreException e) {
                 // Don't care.
@@ -1087,21 +1039,19 @@ public class UI extends JFrame implements IOwner {
                     getJMenuBar().getMenu(i).setEnabled(false);
                 }
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                SwingUtilities.invokeLater(new Runnable() {
-                                               public void run() {
-                                                   try {
-                                                       WriteArchiveDatabase(archiveLocation);
-                                                       WriteArchiveSpreadSheet(archiveLocation);
-                                                   } catch (Exception e) {
-                                                       e.printStackTrace();
-                                                   } finally {
-                                                       for (int i = 0; i < getJMenuBar().getMenuCount(); i++) {
-                                                           getJMenuBar().getMenu(i).setEnabled(true);
-                                                       }
-                                                       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                                                   }
-                                               }
-                                           }
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        WriteArchiveDatabase(archiveLocation);
+                        WriteArchiveSpreadSheet(archiveLocation);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        for (int i = 0; i < getJMenuBar().getMenuCount(); i++) {
+                            getJMenuBar().getMenu(i).setEnabled(true);
+                        }
+                        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    }
+                }
                 );
             }
         }
