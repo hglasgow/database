@@ -125,42 +125,18 @@ public class SearchDialog extends JDialog {
         //////////
 
         JButton cancelButton = new JButton("Close");
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        cancelButton.addActionListener(e -> dispose());
 
         JButton searchButton = new JButton("Search");
-        searchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                search();
-            }
-        });
+        searchButton.addActionListener(e -> search());
 
         JButton lastHundredButton = new JButton("Latest 100");
-        lastHundredButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                lastHundred();
-            }
-        });
+        lastHundredButton.addActionListener(e -> lastHundred());
 
-        editButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                edit();
-            }
-        });
+        editButton.addActionListener(e -> edit());
         editButton.setEnabled(false);
 
-        advanceButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                advance();
-            }
-        });
+        advanceButton.addActionListener(e -> advance());
         advanceButton.setEnabled(false);
 
         JPanel flow = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -175,21 +151,12 @@ public class SearchDialog extends JDialog {
         grid.add(cancelButton);
         getRootPane().setDefaultButton(searchButton);
 
-        resultsList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                ableEditAdvanceButton();
-            }
-        });
+        resultsList.addListSelectionListener(e -> ableEditAdvanceButton());
         primaryOnlyCB.setSelected(owner.getPreferences().getBoolean(Constants.SEARCH_PRIMARY, Constants.SEARCH_PRIMARY_DEFAULT));
         pack();
         setResizable(false);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                membershipIdTF.requestFocus();
-            }
-        });
+        SwingUtilities.invokeLater(() -> membershipIdTF.requestFocus());
 
     }
 
@@ -216,23 +183,20 @@ public class SearchDialog extends JDialog {
                             result.updateClass();
                             resultsListModel.addElement(result);
                             resultsList.setSelectedIndex(resultsListModel.size() - 1);
-                            SwingUtilities.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    resultsList.ensureIndexIsVisible(resultsListModel.size() - 1);
-                                    if (lastSearchBy == Tabs.Dog) {
-                                        dogsNameTF.requestFocus();
-                                        dogsNameTF.selectAll();
-                                    } else if (lastSearchBy == Tabs.FirstName) {
-                                        firstNameTF.requestFocus();
-                                        firstNameTF.selectAll();
-                                    } else if (lastSearchBy == Tabs.LastName) {
-                                        lastNameTF.requestFocus();
-                                        lastNameTF.selectAll();
-                                    } else {
-                                        membershipIdTF.requestFocus();
-                                        membershipIdTF.selectAll();
-                                    }
+                            SwingUtilities.invokeLater(() -> {
+                                resultsList.ensureIndexIsVisible(resultsListModel.size() - 1);
+                                if (lastSearchBy == Tabs.Dog) {
+                                    dogsNameTF.requestFocus();
+                                    dogsNameTF.selectAll();
+                                } else if (lastSearchBy == Tabs.FirstName) {
+                                    firstNameTF.requestFocus();
+                                    firstNameTF.selectAll();
+                                } else if (lastSearchBy == Tabs.LastName) {
+                                    lastNameTF.requestFocus();
+                                    lastNameTF.selectAll();
+                                } else {
+                                    membershipIdTF.requestFocus();
+                                    membershipIdTF.selectAll();
                                 }
                             });
                             break;
@@ -242,11 +206,7 @@ public class SearchDialog extends JDialog {
             }
         }
         resultsListModel.clear();
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                search();
-            }
-        });
+        SwingUtilities.invokeLater(() -> search());
     }
 
     private void ableEditAdvanceButton() {
@@ -265,19 +225,16 @@ public class SearchDialog extends JDialog {
             dispose();
             final Result r = resultsList.getSelectedValue();
 
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    Tabs tab = Tabs.Membership;
-                    if (lastSearchBy == Tabs.Dog) {
-                        tab = Tabs.Dog;
-                    } else if (lastSearchBy == Tabs.FirstName) {
-                        tab = Tabs.FirstName;
-                    } else if (lastSearchBy == Tabs.LastName) {
-                        tab = Tabs.LastName;
-                    }
-                    owner.editMembership(r.getMembershipId(), tab);
+            SwingUtilities.invokeLater(() -> {
+                Tabs tab = Tabs.Membership;
+                if (lastSearchBy == Tabs.Dog) {
+                    tab = Tabs.Dog;
+                } else if (lastSearchBy == Tabs.FirstName) {
+                    tab = Tabs.FirstName;
+                } else if (lastSearchBy == Tabs.LastName) {
+                    tab = Tabs.LastName;
                 }
+                owner.editMembership(r.getMembershipId(), tab);
             });
         }
     }

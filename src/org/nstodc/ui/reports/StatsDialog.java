@@ -45,11 +45,7 @@ public class StatsDialog extends JDialog {
         // East //
         //////////
         JButton okButton = UiUtils.addEast(this);
-        okButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        okButton.addActionListener(e -> dispose());
 
         pack();
         setResizable(false);

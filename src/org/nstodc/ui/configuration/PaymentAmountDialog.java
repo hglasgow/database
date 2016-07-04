@@ -62,46 +62,43 @@ public class PaymentAmountDialog extends JDialog {
         //////////
 
         JButton okButton = UiUtils.addEast(this);
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String x = paymentAmountTF.getText().trim();
-                try {
-                    int i = Integer.parseInt(x);
-                    owner.getDatabase().setDefaultMembershipAmount(i);
-                } catch (NumberFormatException e1) {
-                    // Fool!
-                }
-                x = paymentAmountFromJulyTF.getText().trim();
-                try {
-                    int i = Integer.parseInt(x);
-                    owner.getDatabase().setDefaultMembershipAmountFromJuly(i);
-                } catch (NumberFormatException e1) {
-                    // Fool!
-                }
-                x = paymentAmountFromAugustTF.getText().trim();
-                try {
-                    int i = Integer.parseInt(x);
-                    owner.getDatabase().setDefaultMembershipAmountFromAugust(i);
-                } catch (NumberFormatException e1) {
-                    // Fool!
-                }
-                x = paymentAmountFromSeptemberTF.getText().trim();
-                try {
-                    int i = Integer.parseInt(x);
-                    owner.getDatabase().setDefaultMembershipAmountFromSeptember(i);
-                } catch (NumberFormatException e1) {
-                    // Fool!
-                }
-                x = paymentAmountFromOctoberTF.getText().trim();
-                try {
-                    int i = Integer.parseInt(x);
-                    owner.getDatabase().setDefaultMembershipAmountFromOctober(i);
-                } catch (NumberFormatException e1) {
-                    // Fool!
-                }
-                dispose();
+        okButton.addActionListener(e -> {
+            String x1 = paymentAmountTF.getText().trim();
+            try {
+                int i = Integer.parseInt(x1);
+                owner.getDatabase().setDefaultMembershipAmount(i);
+            } catch (NumberFormatException e1) {
+                // Fool!
             }
+            x1 = paymentAmountFromJulyTF.getText().trim();
+            try {
+                int i = Integer.parseInt(x1);
+                owner.getDatabase().setDefaultMembershipAmountFromJuly(i);
+            } catch (NumberFormatException e1) {
+                // Fool!
+            }
+            x1 = paymentAmountFromAugustTF.getText().trim();
+            try {
+                int i = Integer.parseInt(x1);
+                owner.getDatabase().setDefaultMembershipAmountFromAugust(i);
+            } catch (NumberFormatException e1) {
+                // Fool!
+            }
+            x1 = paymentAmountFromSeptemberTF.getText().trim();
+            try {
+                int i = Integer.parseInt(x1);
+                owner.getDatabase().setDefaultMembershipAmountFromSeptember(i);
+            } catch (NumberFormatException e1) {
+                // Fool!
+            }
+            x1 = paymentAmountFromOctoberTF.getText().trim();
+            try {
+                int i = Integer.parseInt(x1);
+                owner.getDatabase().setDefaultMembershipAmountFromOctober(i);
+            } catch (NumberFormatException e1) {
+                // Fool!
+            }
+            dispose();
         });
 
         pack();

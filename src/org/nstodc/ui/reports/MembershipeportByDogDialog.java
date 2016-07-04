@@ -42,27 +42,14 @@ public class MembershipeportByDogDialog extends JDialog {
         center.add(UiUtils.enFlow(new JLabel("Type"), combo), BorderLayout.CENTER);
         center.add(UiUtils.enFlow(results), BorderLayout.SOUTH);
 
-        combo.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                updateResults();
-            }
-        });
-        lastYear.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                updateResults();
-            }
-        });
+        combo.addActionListener(e -> updateResults());
+        lastYear.addChangeListener(e -> updateResults());
 
         //////////
         // East //
         //////////
         JButton okButton = UiUtils.addEast(this, false);
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        okButton.addActionListener(e -> dispose());
 
         pack();
         setResizable(false);

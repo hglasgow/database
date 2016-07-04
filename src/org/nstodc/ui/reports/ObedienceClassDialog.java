@@ -65,12 +65,9 @@ public class ObedienceClassDialog extends JDialog {
         // East //
         //////////
         JButton okButton = UiUtils.addEast(this);
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                printObedienceClass();
-                dispose();
-            }
+        okButton.addActionListener(e -> {
+            printObedienceClass();
+            dispose();
         });
 
         pack();

@@ -34,22 +34,13 @@ public class MembershipReportByPaymentDialog extends JDialog {
         center.add(UiUtils.enFlow(lastYear), BorderLayout.NORTH);
         center.add(UiUtils.enFlow(results), BorderLayout.SOUTH);
 
-        lastYear.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                updateResults();
-            }
-        });
+        lastYear.addChangeListener(e -> updateResults());
 
         //////////
         // East //
         //////////
         JButton okButton = UiUtils.addEast(this, false);
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        okButton.addActionListener(e -> dispose());
 
         pack();
         setResizable(false);

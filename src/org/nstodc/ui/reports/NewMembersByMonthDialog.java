@@ -49,16 +49,8 @@ public class NewMembersByMonthDialog extends JDialog {
         JRadioButton lastYearRB = new JRadioButton("Last Year");
         bg.add(lastYearRB);
         thisYearRB.setSelected(true);
-        thisYearRB.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                updateIt();
-            }
-        });
-        lastYearRB.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                updateIt();
-            }
-        });
+        thisYearRB.addActionListener(e -> updateIt());
+        lastYearRB.addActionListener(e -> updateIt());
 
         ////////////
         // Center //
@@ -85,12 +77,7 @@ public class NewMembersByMonthDialog extends JDialog {
         // East //
         //////////
         JButton okButton = UiUtils.addEast(this, false);
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        okButton.addActionListener(e -> dispose());
 
         pack();
         setResizable(false);

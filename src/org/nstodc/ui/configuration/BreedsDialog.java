@@ -54,11 +54,7 @@ public class BreedsDialog extends JDialog {
         JScrollPane breedsScrollPane = new JScrollPane();
         breedsScrollPane.setPreferredSize(new Dimension(250, 80));
         breedsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        breedsList.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                ableEdit();
-            }
-        });
+        breedsList.addListSelectionListener(e -> ableEdit());
         breedsList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -84,24 +80,10 @@ public class BreedsDialog extends JDialog {
         //////////
 
         JButton addButton = new JButton("Add");
-        addButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addBreed();
-            }
-        });
-        editButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editBreed();
-            }
-        });
+        addButton.addActionListener(e -> addBreed());
+        editButton.addActionListener(e -> editBreed());
         JButton closeButton = new JButton("Close");
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        closeButton.addActionListener(e -> dispose());
         JPanel buttonsPanel = new JPanel(new GridLayout(0, 1));
         buttonsPanel.add(addButton);
         buttonsPanel.add(editButton);
