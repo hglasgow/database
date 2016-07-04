@@ -65,14 +65,10 @@ public class DogDialog extends JDialog implements IOwner {
 
         centerInnerPanel.add(UiUtils.enFlow(new JLabel("Name"), dogNameTF));
         centerInnerPanel.add(UiUtils.enFlow(new JLabel("Membership year"), dogMembershipYearTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Date of birth"), dogDobTF, new JLabel("dd/mm/yyyy")));
+        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Date of birth"), dogDobTF, new JLabel("dd/mm/yyyy or dd/mm/yy")));
         JButton addBreedBtn = new JButton("Add");
         centerInnerPanel.add(UiUtils.enFlow(new JLabel("Breed"), breedList, addBreedBtn));
-        addBreedBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addBreed();
-            }
-        });
+        addBreedBtn.addActionListener(e -> addBreed());
         initBreeds();
         centerInnerPanel.add(UiUtils.enFlow(dogCrossBreedCB));
         ButtonGroup bg = new ButtonGroup();
@@ -132,12 +128,7 @@ public class DogDialog extends JDialog implements IOwner {
         dogDwdCB.setSelected(dog.isDoesDwd());
         dogMembershipYearTF.setText(String.valueOf(dog.getMembershipYear()));
 
-        dogObedienceCB.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ableDogObedienceClassCombo();
-            }
-        });
+        dogObedienceCB.addActionListener(e -> ableDogObedienceClassCombo());
         ableDogObedienceClassCombo();
 
         //////////
@@ -235,7 +226,6 @@ public class DogDialog extends JDialog implements IOwner {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         dogDobTF.setText(sdf.format(cal.getTime()));
         tf.setText("");
-
     }
 
     private void ableDogObedienceClassCombo() {
@@ -266,6 +256,7 @@ public class DogDialog extends JDialog implements IOwner {
         }
 
         // Dob must be valid
+        padDate(dogDobTF);
         if (!UiUtils.isValidDate(dogDobTF.getText().trim())) {
             JOptionPane.showMessageDialog(this, "Date of birth not valid.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -309,6 +300,18 @@ public class DogDialog extends JDialog implements IOwner {
         }
 
         return true;
+    }
+
+    // dd/mm/yy --> dd/mm/yyyy
+    private void padDate(JTextField dobTF) {
+        String s = dobTF.getText().trim();
+        String t1 = s.substring(2, 3);
+        String t2 = s.substring(5, 6);
+        if (s.length() == 8 &&
+                t1.equals("/") &&
+                t2.equals("/")) {
+            dobTF.setText(s.substring(0, 6) + "20" + s.substring(6));
+        }
     }
 
     public void dispose() {
