@@ -3,7 +3,6 @@ package org.nstodc.ui;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -122,7 +121,8 @@ public class UI extends JFrame implements IOwner {
         cal.add(Calendar.MONTH, -1);
         Date oneMonthAgo = cal.getTime();
         if (lastArchived.compareTo(oneMonthAgo) < 0) {
-            JOptionPane.showMessageDialog(this, "The database has not been archived for over a month.", "Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "The database has not been archived for over a month.", "Warning",
+                    JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -932,13 +932,15 @@ public class UI extends JFrame implements IOwner {
                 return;
             }
             preferences.put(Constants.ARCHIVE_FILE_LOCATION, candidate.getAbsolutePath());
-            JOptionPane.showMessageDialog(this, "Database will now be archived to " + candidate.getAbsolutePath() + ".", "Info", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Database will now be archived to " + candidate.getAbsolutePath() + ".",
+                    "Info", JOptionPane.WARNING_MESSAGE);
 
         }
     }
 
     private void selectDatabase() {
-        int i = JOptionPane.showConfirmDialog(this, "Are you sure you want to change the location of the database?", "Database", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        int i = JOptionPane.showConfirmDialog(this, "Are you sure you want to change the location of the database?",
+                "Database", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (i == 0) {
             Cursor c = getCursor();
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -1360,7 +1362,8 @@ public class UI extends JFrame implements IOwner {
         private final String postcode;
         private final String date;
 
-        public SponsorshipReportLine(String lastName, String firstName, String phone, String mobile, String address, String suburb, String postcode, String date) {
+        public SponsorshipReportLine(String lastName, String firstName, String phone, String mobile, String address,
+                                     String suburb, String postcode, String date) {
             this.lastName = lastName;
             this.firstName = firstName;
             this.phone = phone;

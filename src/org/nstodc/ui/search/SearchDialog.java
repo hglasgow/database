@@ -10,8 +10,6 @@ import org.nstodc.ui.UI;
 import org.nstodc.ui.UiUtils;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Map;
@@ -36,7 +34,7 @@ public class SearchDialog extends JDialog {
     private Tabs lastSearchBy;
 
     private final DefaultListModel<Result> resultsListModel = new DefaultListModel<>();
-    JList<Result> resultsList = new JList<>(resultsListModel);
+    private JList<Result> resultsList = new JList<>(resultsListModel);
 
     public SearchDialog(final UI owner) {
         super(owner, "Search", true);
@@ -206,7 +204,7 @@ public class SearchDialog extends JDialog {
             }
         }
         resultsListModel.clear();
-        SwingUtilities.invokeLater(() -> search());
+        SwingUtilities.invokeLater(this::search);
     }
 
     private void ableEditAdvanceButton() {

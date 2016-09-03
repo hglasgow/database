@@ -6,8 +6,6 @@ import org.nstodc.ui.UiUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -83,38 +81,30 @@ public class PaymentDialog extends JDialog {
         //////////
 
         JButton okButton = UiUtils.addEast(this);
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (validateIt()) {
-                    payment.setPaymentTypeId(((PaymentTypeWrapper) paymentTypeCombo.getSelectedItem()).paymentType.getPaymentTypeId());
-                    payment.setPaymentDate(dateTF.getText().trim());
-                    payment.setYear(Integer.parseInt(yearTF.getText().trim()));
-                    payment.setAmount(Integer.parseInt(amountTF.getText().trim()));
-                    if (receiptNumberTF.getText().trim().length() == 0) {
-                        payment.setReceiptNumber(0);
-                    } else {
-                        payment.setReceiptNumber(Integer.parseInt(receiptNumberTF.getText().trim()));
-                    }
-                    if (nyoo) {
-                        saveNew();
-                    } else {
-                        saveExisting();
-                    }
-                    dispose();
+        okButton.addActionListener(e -> {
+            if (validateIt()) {
+                payment.setPaymentTypeId(((PaymentTypeWrapper) paymentTypeCombo.getSelectedItem()).paymentType.getPaymentTypeId());
+                payment.setPaymentDate(dateTF.getText().trim());
+                payment.setYear(Integer.parseInt(yearTF.getText().trim()));
+                payment.setAmount(Integer.parseInt(amountTF.getText().trim()));
+                if (receiptNumberTF.getText().trim().length() == 0) {
+                    payment.setReceiptNumber(0);
+                } else {
+                    payment.setReceiptNumber(Integer.parseInt(receiptNumberTF.getText().trim()));
                 }
+                if (nyoo) {
+                    saveNew();
+                } else {
+                    saveExisting();
+                }
+                dispose();
             }
         });
 
         pack();
         setResizable(false);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                receiptNumberTF.requestFocus();
-            }
-        });
+        SwingUtilities.invokeLater(receiptNumberTF::requestFocus);
 
     }
 

@@ -10,8 +10,6 @@ import org.nstodc.ui.configuration.BreedsDialog;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.text.SimpleDateFormat;
@@ -65,7 +63,7 @@ public class DogDialog extends JDialog implements IOwner {
 
         centerInnerPanel.add(UiUtils.enFlow(new JLabel("Name"), dogNameTF));
         centerInnerPanel.add(UiUtils.enFlow(new JLabel("Membership year"), dogMembershipYearTF));
-        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Date of birth"), dogDobTF, new JLabel("dd/mm/yyyy or dd/mm/yy")));
+        centerInnerPanel.add(UiUtils.enFlow(new JLabel("Date of birth"), dogDobTF, new JLabel("dd/mm/yyyy")));
         JButton addBreedBtn = new JButton("Add");
         centerInnerPanel.add(UiUtils.enFlow(new JLabel("Breed"), breedList, addBreedBtn));
         addBreedBtn.addActionListener(e -> addBreed());
@@ -136,29 +134,26 @@ public class DogDialog extends JDialog implements IOwner {
         //////////
 
         JButton okButton = UiUtils.addEast(this);
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (validateIt()) {
-                    dog.setName(dogNameTF.getText().trim());
-                    dog.setDateOfBirth(dogDobTF.getText().trim());
-                    dog.setBreedId(((BreedWrapper) breedList.getSelectedItem()).breed.getBreedId());
-                    dog.setCrossBreed(dogCrossBreedCB.isSelected());
-                    dog.setMale(dogGenderMaleRB.isSelected());
-                    dog.setSterilized(dogSterilizedCB.isSelected());
-                    dog.setDoesObedience(dogObedienceCB.isSelected());
-                    dog.setDoesAgility(dogAgilityCB.isSelected());
-                    dog.setDoesDwd(dogDwdCB.isSelected());
-                    dog.setObedienceClassId(((ObedienceClassWrapper) obedienceClassCombo.getSelectedItem()).obedienceClass.getObedienceClassId());
-                    dog.setMembershipYear(Integer.parseInt(dogMembershipYearTF.getText()));
+        okButton.addActionListener(e -> {
+            if (validateIt()) {
+                dog.setName(dogNameTF.getText().trim());
+                dog.setDateOfBirth(dogDobTF.getText().trim());
+                dog.setBreedId(((BreedWrapper) breedList.getSelectedItem()).breed.getBreedId());
+                dog.setCrossBreed(dogCrossBreedCB.isSelected());
+                dog.setMale(dogGenderMaleRB.isSelected());
+                dog.setSterilized(dogSterilizedCB.isSelected());
+                dog.setDoesObedience(dogObedienceCB.isSelected());
+                dog.setDoesAgility(dogAgilityCB.isSelected());
+                dog.setDoesDwd(dogDwdCB.isSelected());
+                dog.setObedienceClassId(((ObedienceClassWrapper) obedienceClassCombo.getSelectedItem()).obedienceClass.getObedienceClassId());
+                dog.setMembershipYear(Integer.parseInt(dogMembershipYearTF.getText()));
 
-                    if (nyoo) {
-                        saveNew();
-                    } else {
-                        saveExisting();
-                    }
-                    dispose();
+                if (nyoo) {
+                    saveNew();
+                } else {
+                    saveExisting();
                 }
+                dispose();
             }
         });
 

@@ -10,13 +10,7 @@ import org.nstodc.ui.UiUtils;
 import org.nstodc.ui.configuration.SuburbsDialog;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
@@ -100,12 +94,10 @@ public class MembershipDialog extends JDialog implements IOwner {
         l = new JLabel("Postcode");
         final JLabel postcodeLabel = new JLabel();
         membershipInnerPanel.add(UiUtils.enFlow(l, postcodeLabel));
-        suburbCB.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Object item = suburbModel.getSelectedItem();
-                if (item != null) {
-                    postcodeLabel.setText(((SuburbWrapper) item).suburb.getPostcode());
-                }
+        suburbCB.addActionListener(e -> {
+            Object item = suburbModel.getSelectedItem();
+            if (item != null) {
+                postcodeLabel.setText(((SuburbWrapper) item).suburb.getPostcode());
             }
         });
 
@@ -134,11 +126,7 @@ public class MembershipDialog extends JDialog implements IOwner {
 
         UiUtils.sameWidth(addressLabel, suburbLabel, phoneLabel, mobileLabel, emailLabel);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                addressTF.requestFocus();
-            }
-        });
+        SwingUtilities.invokeLater(addressTF::requestFocus);
 
         //////////////
         // Handlers //
@@ -171,14 +159,12 @@ public class MembershipDialog extends JDialog implements IOwner {
         handlerEditBtn.addActionListener(e -> editHandler());
         final JButton handlerDeleteBtn = new JButton("Delete");
         handlerDeleteBtn.setEnabled(false);
-        handlerDeleteBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                HandlerWrapper selectedValue = handlersList.getSelectedValue();
-                if (JOptionPane.showConfirmDialog(MembershipDialog.this,
-                        "Delete " + selectedValue.handler.getFirstName() + " " + selectedValue.handler.getFirstName() + "?", "Delete",
-                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                    handlersListModel.remove(handlersList.getSelectedIndex());
-                }
+        handlerDeleteBtn.addActionListener(e -> {
+            HandlerWrapper selectedValue = handlersList.getSelectedValue();
+            if (JOptionPane.showConfirmDialog(MembershipDialog.this,
+                    "Delete " + selectedValue.handler.getFirstName() + " " + selectedValue.handler.getFirstName() + "?", "Delete",
+                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                handlersListModel.remove(handlersList.getSelectedIndex());
             }
         });
         handlerButtonsPanel.add(handlerAddBtn);
@@ -231,14 +217,12 @@ public class MembershipDialog extends JDialog implements IOwner {
         dogEditBtn.addActionListener(e -> editDog());
         final JButton dogDeleteBtn = new JButton("Delete");
         dogDeleteBtn.setEnabled(false);
-        dogDeleteBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                DogWrapper selectedValue = dogsList.getSelectedValue();
-                if (JOptionPane.showConfirmDialog(MembershipDialog.this,
-                        "Delete " + selectedValue.dog.getName() + "?", "Delete",
-                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                    dogsListModel.remove(dogsList.getSelectedIndex());
-                }
+        dogDeleteBtn.addActionListener(e -> {
+            DogWrapper selectedValue = dogsList.getSelectedValue();
+            if (JOptionPane.showConfirmDialog(MembershipDialog.this,
+                    "Delete " + selectedValue.dog.getName() + "?", "Delete",
+                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                dogsListModel.remove(dogsList.getSelectedIndex());
             }
         });
         final JButton dogAdvanceBtn = new JButton("Advance");
@@ -261,19 +245,17 @@ public class MembershipDialog extends JDialog implements IOwner {
             DogWrapper w = new DogWrapper(dog);
             dogsListModel.addElement(w);
         }
-        dogsList.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                boolean selected = dogsList.getSelectedIndex() > -1;
-                dogEditBtn.setEnabled(selected);
-                dogDeleteBtn.setEnabled(selected);
-                if (selected) {
-                    Dog dog = dogsListModel.getElementAt(dogsList.getSelectedIndex()).dog;
-                    dogAdvanceBtn.setEnabled(dog.isDoesObedience());
-                    dogRenewBtn.setEnabled(dog.getMembershipYear() < UiUtils.defaultYear());
-                } else {
-                    dogAdvanceBtn.setEnabled(false);
-                    dogRenewBtn.setEnabled(false);
-                }
+        dogsList.addListSelectionListener(e -> {
+            boolean selected = dogsList.getSelectedIndex() > -1;
+            dogEditBtn.setEnabled(selected);
+            dogDeleteBtn.setEnabled(selected);
+            if (selected) {
+                Dog dog = dogsListModel.getElementAt(dogsList.getSelectedIndex()).dog;
+                dogAdvanceBtn.setEnabled(dog.isDoesObedience());
+                dogRenewBtn.setEnabled(dog.getMembershipYear() < UiUtils.defaultYear());
+            } else {
+                dogAdvanceBtn.setEnabled(false);
+                dogRenewBtn.setEnabled(false);
             }
         });
         if (dogsListModel.size() == 1) {
@@ -311,14 +293,12 @@ public class MembershipDialog extends JDialog implements IOwner {
         paymentEditBtn.addActionListener(e -> editPayment());
         final JButton paymentDeleteBtn = new JButton("Delete");
         paymentDeleteBtn.setEnabled(false);
-        paymentDeleteBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                PaymentWrapper selectedValue = paymentsList.getSelectedValue();
-                if (JOptionPane.showConfirmDialog(MembershipDialog.this,
-                        "Delete " + selectedValue.toString() + "?", "Delete",
-                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                    paymentsListModel.remove(paymentsList.getSelectedIndex());
-                }
+        paymentDeleteBtn.addActionListener(e -> {
+            PaymentWrapper selectedValue = paymentsList.getSelectedValue();
+            if (JOptionPane.showConfirmDialog(MembershipDialog.this,
+                    "Delete " + selectedValue.toString() + "?", "Delete",
+                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                paymentsListModel.remove(paymentsList.getSelectedIndex());
             }
         });
         paymentButtonsPanel.add(paymentAddBtn);
