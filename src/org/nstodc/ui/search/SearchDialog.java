@@ -4,7 +4,6 @@ import org.nstodc.database.type.Dog;
 import org.nstodc.database.type.Handler;
 import org.nstodc.database.type.Membership;
 import org.nstodc.database.type.ObedienceClass;
-import org.nstodc.ui.Constants;
 import org.nstodc.ui.Tabs;
 import org.nstodc.ui.UI;
 import org.nstodc.ui.UiUtils;
@@ -16,6 +15,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import static org.nstodc.ui.Constants.*;
 
 /**
  * Search for a membership.
@@ -150,7 +151,7 @@ public class SearchDialog extends JDialog {
         getRootPane().setDefaultButton(searchButton);
 
         resultsList.addListSelectionListener(e -> ableEditAdvanceButton());
-        primaryOnlyCB.setSelected(owner.getPreferences().getBoolean(Constants.SEARCH_PRIMARY, Constants.SEARCH_PRIMARY_DEFAULT));
+        primaryOnlyCB.setSelected(owner.getPreferences().getBoolean(SEARCH_PRIMARY, SEARCH_PRIMARY_DEFAULT));
         pack();
         setResizable(false);
 
@@ -474,7 +475,7 @@ public class SearchDialog extends JDialog {
     public void dispose() {
         super.dispose();
         UiUtils.updateLocation(this, owner.getPreferences());
-        owner.getPreferences().putBoolean(Constants.SEARCH_PRIMARY, primaryOnlyCB.isSelected());
+        owner.getPreferences().putBoolean(SEARCH_PRIMARY, primaryOnlyCB.isSelected());
     }
 
     private class Result implements Comparable<Result> {

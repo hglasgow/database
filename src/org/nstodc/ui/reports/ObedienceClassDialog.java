@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static org.nstodc.ui.Constants.*;
+
 /**
  * Display list of classes to print.
  */
@@ -37,7 +39,7 @@ public class ObedienceClassDialog extends JDialog {
             SpinnerNumberModel model = new SpinnerNumberModel(1, 0, 5, 1);
             JSpinner spinner = new JSpinner(model);
             ClassTuple tuple = new ClassTuple(spinner, obedienceClass);
-            int count = owner.getPreferences().getInt(Constants.UI_OBEDIENCE_CLASS + obedienceClass.getObedienceClass(), 1);
+            int count = owner.getPreferences().getInt(UI_OBEDIENCE_CLASS + obedienceClass.getObedienceClass(), 1);
             model.setValue(count);
             tuples.put(obedienceClass.getListSequenceId(), tuple);
         }
@@ -155,7 +157,7 @@ public class ObedienceClassDialog extends JDialog {
         for (ClassTuple tuple : tuples.values()) {
             SpinnerNumberModel m = (SpinnerNumberModel) (tuple.getSpinner().getModel());
             int v = m.getNumber().intValue();
-            owner.getPreferences().putInt(Constants.UI_OBEDIENCE_CLASS + tuple.getObedienceClass().getObedienceClass(), v);
+            owner.getPreferences().putInt(UI_OBEDIENCE_CLASS + tuple.getObedienceClass().getObedienceClass(), v);
         }
         UiUtils.updateLocation(ObedienceClassDialog.this, owner.getPreferences());
     }
