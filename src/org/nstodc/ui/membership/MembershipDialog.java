@@ -331,6 +331,7 @@ public class MembershipDialog extends JDialog implements IOwner {
                 updateHandlers();
                 updateDogs();
                 updatePayments();
+                owner.saveDatabase();
                 dispose();
             }
         });

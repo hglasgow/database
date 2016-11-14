@@ -246,8 +246,8 @@ public class UI extends JFrame implements IOwner {
         menuBar.add(fileMenu);
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
-        // Add
         if (loadedDatabaseSuccessfully.get()) {
+            // Add
             JMenuItem addMenuItem = new JMenuItem("Add Membership...");
             fileMenu.add(addMenuItem);
             addMenuItem.setMnemonic(KeyEvent.VK_A);
@@ -288,11 +288,6 @@ public class UI extends JFrame implements IOwner {
 
             fileMenu.addSeparator();
 
-            // Exit without saving
-            JMenuItem exitWithoutMenuItem = new JMenuItem("Exit Without Saving...");
-            fileMenu.add(exitWithoutMenuItem);
-            archiveMenuItem.setMnemonic(KeyEvent.VK_W);
-            exitWithoutMenuItem.addActionListener(e -> exitWithoutSaving());
         }
 
         // Exit
@@ -799,14 +794,6 @@ public class UI extends JFrame implements IOwner {
         return str.replace(",", "").replace("\"", "");
     }
 
-    private void exitWithoutSaving() {
-        int result = JOptionPane.showConfirmDialog(this, "Exit without saving any changes?", "Exit",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (result == JOptionPane.OK_OPTION) {
-            System.exit(0);
-        }
-    }
-
     private void vanReport() {
         VanBean vb = createVanBean();
         printVanReport(vb);
@@ -1274,15 +1261,18 @@ public class UI extends JFrame implements IOwner {
         }
     }
 
-    private void saveDatabase() {
+    public void saveDatabase() {
         if (!loadedDatabaseSuccessfully.get()) {
             return;
         }
 
+        for (int i = 0; i < getJMenuBar().getMenuCount(); i++) {
+            getJMenuBar().getMenu(i).setEnabled(false);
+        }
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         Thread t = new Thread() {
             @Override
             public void run() {
-                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try {
                     XStream xstream = new XStream(new DomDriver());
                     String xml = xstream.toXML(database);
@@ -1302,6 +1292,9 @@ public class UI extends JFrame implements IOwner {
                     }
                 } finally {
                     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    for (int i = 0; i < getJMenuBar().getMenuCount(); i++) {
+                        getJMenuBar().getMenu(i).setEnabled(true);
+                    }
                 }
             }
         };

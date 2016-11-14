@@ -66,7 +66,12 @@ public class ObedienceClassDialog extends JDialog {
         //////////
         JButton okButton = UiUtils.addEast(this);
         okButton.addActionListener(e -> {
-            printObedienceClass();
+            Thread t = new Thread() {
+                public void run() {
+                    printObedienceClass();
+                }
+            };
+            t.start();
             dispose();
         });
 
