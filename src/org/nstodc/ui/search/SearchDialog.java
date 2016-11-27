@@ -165,6 +165,9 @@ public class SearchDialog extends JDialog {
             Result result = resultsListModel.getElementAt(index);
             Dog dog = result.dog;
             if (dog != null) {
+                if (dog.getMembershipYear() < UiUtils.defaultYear()) {
+                    dog.setMembershipYear(UiUtils.defaultYear());
+                }
                 Map<Integer, ObedienceClass> m = new TreeMap<>();
                 ObedienceClass currentClass = null;
                 for (ObedienceClass obedienceClass : owner.getDatabase().getObedienceClasses()) {

@@ -551,6 +551,9 @@ public class MembershipDialog extends JDialog implements IOwner {
         int index = dogsList.getSelectedIndex();
         if (index >= 0) {
             Dog dog = dogsListModel.getElementAt(index).dog;
+            if (dog.getMembershipYear() < UiUtils.defaultYear()) {
+                dog.setMembershipYear(UiUtils.defaultYear());
+            }
 
             Map<Integer, ObedienceClass> m = new TreeMap<>();
             ObedienceClass currentClass = null;
