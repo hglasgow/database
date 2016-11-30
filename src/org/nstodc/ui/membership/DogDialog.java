@@ -7,6 +7,7 @@ import org.nstodc.database.type.ObedienceClass;
 import org.nstodc.ui.IOwner;
 import org.nstodc.ui.UiUtils;
 import org.nstodc.ui.configuration.BreedsDialog;
+import org.nstodc.ui.data.BreedWrapper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -138,7 +139,7 @@ public class DogDialog extends JDialog implements IOwner {
             if (validateIt()) {
                 dog.setName(dogNameTF.getText().trim());
                 dog.setDateOfBirth(dogDobTF.getText().trim());
-                dog.setBreedId(((BreedWrapper) breedList.getSelectedItem()).breed.getBreedId());
+                dog.setBreedId(((BreedWrapper) breedList.getSelectedItem()).getBreed().getBreedId());
                 dog.setCrossBreed(dogCrossBreedCB.isSelected());
                 dog.setMale(dogGenderMaleRB.isSelected());
                 dog.setSterilized(dogSterilizedCB.isSelected());
@@ -244,7 +245,7 @@ public class DogDialog extends JDialog implements IOwner {
         }
 
         // Need a breed
-        int id = ((BreedWrapper) breedList.getSelectedItem()).breed.getBreedId();
+        int id = ((BreedWrapper) breedList.getSelectedItem()).getBreed().getBreedId();
         if (id < 0) {
             JOptionPane.showMessageDialog(this, "Breed required.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -322,17 +323,6 @@ public class DogDialog extends JDialog implements IOwner {
         return owner.getDatabase();
     }
 
-    private class BreedWrapper {
-        private Breed breed;
-
-        private BreedWrapper(Breed breed) {
-            this.breed = breed;
-        }
-
-        public String toString() {
-            return breed.getBreed();
-        }
-    }
 
     private class ObedienceClassWrapper {
         private ObedienceClass obedienceClass;

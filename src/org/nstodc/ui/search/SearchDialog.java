@@ -1,12 +1,10 @@
 package org.nstodc.ui.search;
 
-import org.nstodc.database.type.Dog;
-import org.nstodc.database.type.Handler;
-import org.nstodc.database.type.Membership;
-import org.nstodc.database.type.ObedienceClass;
+import org.nstodc.database.type.*;
 import org.nstodc.ui.Tabs;
 import org.nstodc.ui.UI;
 import org.nstodc.ui.UiUtils;
+import org.nstodc.ui.data.BreedWrapper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.nstodc.ui.Constants.*;
 
@@ -23,6 +22,9 @@ import static org.nstodc.ui.Constants.*;
  */
 public class SearchDialog extends JDialog {
 
+    private static final int NO_BREED_SELECTED = -1;
+    private final AtomicBoolean vitoBreedSelectionChange = new AtomicBoolean();
+
     private UI owner;
 
     private JCheckBox primaryOnlyCB = new JCheckBox("Primary only");
@@ -30,6 +32,8 @@ public class SearchDialog extends JDialog {
     private JTextField firstNameTF = new JTextField(10);
     private JTextField lastNameTF = new JTextField(10);
     private JTextField dogsNameTF = new JTextField(10);
+    private final DefaultComboBoxModel<BreedWrapper> breedListModel = new DefaultComboBoxModel<>();
+    private final JComboBox<BreedWrapper> breedList = new JComboBox<>(breedListModel);
     private JButton advanceButton = new JButton("Advance");
     private JButton editButton = new JButton("Edit");
     private Tabs lastSearchBy;
@@ -66,14 +70,16 @@ public class SearchDialog extends JDialog {
         JLabel dogLabel = new JLabel("Dog's name");
         JLabel firstLabel = new JLabel("First name");
         JLabel lastLabel = new JLabel("Last name");
+        JLabel breedLabel = new JLabel("Breed");
 
-        UiUtils.sameWidth(membershipLabel, dogLabel, firstLabel, lastLabel);
+        UiUtils.sameWidth(membershipLabel, dogLabel, firstLabel, lastLabel, breedLabel);
 
         centerInnerPanel.add(UiUtils.enFlow(primaryOnlyCB));
         centerInnerPanel.add(UiUtils.enFlow(membershipLabel, membershipIdTF));
         centerInnerPanel.add(UiUtils.enFlow(dogLabel, dogsNameTF));
         centerInnerPanel.add(UiUtils.enFlow(firstLabel, firstNameTF));
         centerInnerPanel.add(UiUtils.enFlow(lastLabel, lastNameTF));
+        centerInnerPanel.add(UiUtils.enFlow(breedLabel, breedList));
 
         membershipIdTF.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
@@ -82,6 +88,9 @@ public class SearchDialog extends JDialog {
                     lastNameTF.setText("");
                     dogsNameTF.setText("");
                     resultsListModel.clear();
+                    vitoBreedSelectionChange.set(true);
+                    breedList.setSelectedIndex(0);
+                    vitoBreedSelectionChange.set(false);
                 }
             }
         });
@@ -119,6 +128,12 @@ public class SearchDialog extends JDialog {
             }
         });
 
+        breedList.addItemListener(e -> {
+            if (!vitoBreedSelectionChange.get()) {
+                membershipIdTF.setText("");
+            }
+        });
+
         //////////
         // East //
         //////////
@@ -141,6 +156,8 @@ public class SearchDialog extends JDialog {
         JPanel flow = new JPanel(new FlowLayout(FlowLayout.LEFT));
         getContentPane().add(flow, BorderLayout.EAST);
 
+        initBreeds();
+
         JPanel grid = new JPanel(new GridLayout(0, 1));
         flow.add(grid);
         grid.add(searchButton);
@@ -156,7 +173,6 @@ public class SearchDialog extends JDialog {
         setResizable(false);
 
         SwingUtilities.invokeLater(() -> membershipIdTF.requestFocus());
-
     }
 
     private void advance() {
@@ -335,11 +351,11 @@ public class SearchDialog extends JDialog {
         String firstName = firstNameTF.getText().trim();
         String lastName = lastNameTF.getText().trim();
         String dogsName = dogsNameTF.getText().trim();
+        int breedId = ((BreedWrapper) breedList.getSelectedItem()).getBreed().getBreedId();
 
         try {
             membershipId = Integer.parseInt(membershipIdTF.getText().trim());
         } catch (NumberFormatException e) {
-
             // Don't care
         }
 
@@ -350,19 +366,40 @@ public class SearchDialog extends JDialog {
             sortMembershipId(results, membershipId);
         } else if (firstName.length() > 0) {
             lastSearchBy = Tabs.FirstName;
-            sortFirstName(results, firstName);
+            sortFirstName(results, firstName, breedId);
         } else if (lastName.length() > 0) {
             lastSearchBy = Tabs.LastName;
-            sortLastName(results, lastName);
+            sortLastName(results, lastName, breedId);
         } else if (dogsName.length() > 0) {
             lastSearchBy = Tabs.Dog;
-            sortDogsName(results, dogsName);
+            sortDogsName(results, dogsName, breedId);
+        } else if (breedId != NO_BREED_SELECTED) {
+            lastSearchBy = Tabs.Dog;
+            sortBreed(results, breedId);
         }
 
         showResults(results);
     }
 
-    private void sortDogsName(Set<Result> results, String dogsName) {
+    private void sortBreed(Set<Result> results, int breedId) {
+        for (Handler handler : owner.getDatabase().getHandlers()) {
+            if (!primaryOnlyCB.isSelected() || handler.isPrimary()) {
+                for (Membership membership : owner.getDatabase().getMemberships()) {
+                    if (membership.getMembershipId() == handler.getMembershipId()) {
+                        for (Dog dog : owner.getDatabase().getDogs()) {
+                            if (dog.getMembershipId() == membership.getMembershipId() &&
+                                    (breedId == NO_BREED_SELECTED || dog.getBreedId() == breedId)) {
+                                Result r = new Result(membership.getMembershipId(), handler, dog);
+                                results.add(r);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void sortDogsName(Set<Result> results, String dogsName, int breedId) {
         String searchString = dogsName;
         boolean wildCard = false;
         if (searchString.endsWith("%")) {
@@ -373,7 +410,7 @@ public class SearchDialog extends JDialog {
             boolean match = wildCard ?
                     dog.getName().toLowerCase().startsWith(searchString) :
                     dog.getName().equalsIgnoreCase(dogsName);
-            if (match) {
+            if (match && (breedId == NO_BREED_SELECTED || dog.getBreedId() == breedId)) {
                 for (Membership membership : owner.getDatabase().getMemberships()) {
                     if (membership.getMembershipId() == dog.getMembershipId()) {
                         for (Handler handler : owner.getDatabase().getHandlers()) {
@@ -390,7 +427,7 @@ public class SearchDialog extends JDialog {
         }
     }
 
-    private void sortLastName(Set<Result> results, String lastName) {
+    private void sortLastName(Set<Result> results, String lastName, int breedId) {
         for (Handler handler : owner.getDatabase().getHandlers()) {
             if (handler.getLastName().equalsIgnoreCase(lastName)) {
                 if (!primaryOnlyCB.isSelected() || handler.isPrimary()) {
@@ -398,7 +435,8 @@ public class SearchDialog extends JDialog {
                         if (membership.getMembershipId() == handler.getMembershipId()) {
                             boolean gotDog = false;
                             for (Dog dog : owner.getDatabase().getDogs()) {
-                                if (dog.getMembershipId() == membership.getMembershipId()) {
+                                if (dog.getMembershipId() == membership.getMembershipId() &&
+                                        (breedId == NO_BREED_SELECTED || dog.getBreedId() == breedId)) {
                                     Result r = new Result(membership.getMembershipId(), handler, dog);
                                     results.add(r);
                                     gotDog = true;
@@ -415,7 +453,7 @@ public class SearchDialog extends JDialog {
         }
     }
 
-    private void sortFirstName(Set<Result> results, String firstName) {
+    private void sortFirstName(Set<Result> results, String firstName, int breedId) {
         for (Handler handler : owner.getDatabase().getHandlers()) {
             if (handler.getFirstName().equalsIgnoreCase(firstName)) {
                 if (!primaryOnlyCB.isSelected() || handler.isPrimary()) {
@@ -423,7 +461,8 @@ public class SearchDialog extends JDialog {
                         if (membership.getMembershipId() == handler.getMembershipId()) {
                             boolean gotDog = false;
                             for (Dog dog : owner.getDatabase().getDogs()) {
-                                if (dog.getMembershipId() == membership.getMembershipId()) {
+                                if (dog.getMembershipId() == membership.getMembershipId() &&
+                                        (breedId == NO_BREED_SELECTED || dog.getBreedId() == breedId)) {
                                     Result r = new Result(membership.getMembershipId(), handler, dog);
                                     results.add(r);
                                     gotDog = true;
@@ -479,6 +518,21 @@ public class SearchDialog extends JDialog {
         super.dispose();
         UiUtils.updateLocation(this, owner.getPreferences());
         owner.getPreferences().putBoolean(SEARCH_PRIMARY, primaryOnlyCB.isSelected());
+    }
+
+    private void initBreeds() {
+        Map<String, Breed> m = new TreeMap<>();
+        for (Breed breed : owner.getDatabase().getBreeds()) {
+            m.put(breed.getBreed(), breed);
+        }
+        Breed b = new Breed(-1);
+        b.setBreed("Select Breed");
+        BreedWrapper w = new BreedWrapper(b);
+        breedListModel.addElement(w);
+        for (Breed breed : m.values()) {
+            w = new BreedWrapper(breed);
+            breedListModel.addElement(w);
+        }
     }
 
     private class Result implements Comparable<Result> {
