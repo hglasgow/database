@@ -223,7 +223,6 @@ public class SearchDialog extends JDialog {
                 }
             }
         }
-        resultsListModel.clear();
         SwingUtilities.invokeLater(this::search);
     }
 
@@ -324,11 +323,26 @@ public class SearchDialog extends JDialog {
     }
 
     private void showResults(Set<Result> results) {
+        Result selectedValue = resultsList.getSelectedValue();
         resultsListModel.clear();
         for (Result result : results) {
             resultsListModel.addElement(result);
         }
-        selectSinglePrimaryEntry();
+        if (selectedValue == null) {
+            selectSinglePrimaryEntry();
+        } else {
+            selectExistingEntry(selectedValue);
+        }
+    }
+
+    private void selectExistingEntry(Result selectedValue) {
+        for (int i = 0; i < resultsList.getModel().getSize(); i++) {
+            Result elementAt = resultsList.getModel().getElementAt(i);
+            if (elementAt.compareTo(selectedValue) == 0) {
+                resultsList.setSelectedValue(elementAt, true);
+                break;
+            }
+        }
     }
 
     private void selectSinglePrimaryEntry() {
@@ -343,7 +357,6 @@ public class SearchDialog extends JDialog {
             }
         }
         resultsList.setSelectedIndex(index);
-
     }
 
     private void search() {
